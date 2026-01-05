@@ -1,8 +1,17 @@
 import { InteractiveGridPattern } from "./ui/shadcn-io/interactive-grid-pattern/index"
 import { cn } from "@/lib/utils"
-import { ArrowRight } from "lucide-react"
+import { useGoogleLogin } from '@react-oauth/google';
 
 export function Home() {
+
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      console.log(tokenResponse)
+    }
+  })
+
+
+
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background">
       
@@ -28,7 +37,8 @@ export function Home() {
           efficiently.
         </p>
 
-        <button type="button" className="flex justify-center text-white bg-blue-600 box-border border border-transparent hover:bg-blue-700 focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-lg text-lg px-4 py-2.5 focus:outline-none">Get Started</button>
+        <button type="button" className="flex justify-center items-center gap-x-1 box-border border border-black bg-white hover:bg-gray-100 shadow-xs font-medium leading-5 rounded-lg text-lg p-2" onClick={() => login()}>
+          <img src="../public/google.svg" alt="" width="35px" height="35px" />Get Started with Google</button>
       </div>
     </div>
   )
