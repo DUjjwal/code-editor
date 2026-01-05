@@ -2,8 +2,13 @@ import { InteractiveGridPattern } from "./ui/shadcn-io/interactive-grid-pattern/
 import { cn } from "@/lib/utils"
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from "axios"
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { error } from "@/lib/error";
 
 export function Home() {
+
+  const navigate = useNavigate()
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -13,9 +18,12 @@ export function Home() {
       },{withCredentials: true})
 
 
-      console.log(tokenResponse)
-
-      console.log(res.data)
+      if(res.status === 200) {
+        navigate("/dashboard")
+      }
+      else {
+        error(res.data.message)
+      }
 
       
     }
@@ -48,9 +56,10 @@ export function Home() {
           efficiently.
         </p>
 
-        <button type="button" className="flex justify-center items-center gap-x-1 box-border border border-black bg-white hover:bg-gray-100 shadow-xs font-medium leading-5 rounded-lg text-lg p-2" onClick={() => login()}>
+        <button type="button" className="flex justify-center items-center gap-x-1 box-border border border-gray-600 bg-white hover:bg-gray-100 shadow-xs font-medium leading-5 rounded-lg text-lg p-2" onClick={() => login()}>
           <img src="../public/google.svg" alt="" width="35px" height="35px" />Get Started with Google</button>
       </div>
+      
     </div>
   )
 }

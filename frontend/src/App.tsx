@@ -1,6 +1,7 @@
 import {Route, Routes, BrowserRouter} from "react-router-dom"
 import {Home} from "./components/Home"
 import {Dashboard} from "./components/Dashboard"
+import { ToastContainer, Bounce } from "react-toastify"
 
 function App() {
 
@@ -13,6 +14,19 @@ function App() {
         </Routes>
       
       </BrowserRouter>
+      <ToastContainer
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light"
+      transition={Bounce}
+      />
     </div>
 
   )
