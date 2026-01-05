@@ -10,7 +10,7 @@ export function Home() {
 
       const res = await axios.post("http://localhost:4000/api/auth/google", {
         access_token: tokenResponse.access_token
-      })
+      },{withCredentials: true})
 
 
       console.log(tokenResponse)
