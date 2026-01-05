@@ -1,12 +1,23 @@
 import { InteractiveGridPattern } from "./ui/shadcn-io/interactive-grid-pattern/index"
 import { cn } from "@/lib/utils"
 import { useGoogleLogin } from '@react-oauth/google';
+import axios from "axios"
 
 export function Home() {
 
   const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
+    onSuccess: async (tokenResponse) => {
+
+      const res = await axios.post("http://localhost:4000/api/auth/google", {
+        access_token: tokenResponse.access_token
+      })
+
+
       console.log(tokenResponse)
+
+      console.log(res.data)
+
+      
     }
   })
 
