@@ -36,7 +36,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
@@ -147,7 +146,7 @@ export function DashboardRight() {
         }
 
         try {
-            const res = await axios.post("http://localhost:4000/playground/create", {
+            await axios.post("http://localhost:4000/playground/create", {
                 template, title: name
             }, {withCredentials: true})
 
