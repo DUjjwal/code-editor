@@ -11,8 +11,7 @@ import {
 import { usePlayground } from "@/store/playgroundStore"
 
 import { Home, Database, LayoutDashboard } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo } from "react"
 
 const items = [
   {
@@ -33,6 +32,7 @@ interface project {
     template: string,
     createdAt: string,
     username: string,
+    picture?: string,
     starred: boolean,
     updatedAt: string
 }
@@ -40,29 +40,28 @@ interface project {
 
 export function DashboardLeft() {
 
-    //@ts-ignore
     const projects: project[] = usePlayground((state) => state.projects)
 
-    console.log(projects)
-    const [starredProjects, setStarredProjects] = useState<project[]>([])
-    const [recentProjects, setRecentProjects] = useState<project[]>([])
     
-    useEffect(() => {
+    const starredProjects = useMemo(
+    () => projects.filter(p => p.starred),
+    [projects]
+    );
 
-        const starred = projects.filter(p => p.starred);
-        console.log("starred-", starred)
-        setStarredProjects(starred);
-
-        const recent = [...projects]
-            .sort(
+    const recentProjects = useMemo(
+    () =>
+        [...projects]
+        .sort(
             (a, b) =>
-                new Date(b.updatedAt).getTime() -
-                new Date(a.updatedAt).getTime()
-            )
-            .slice(0, 5);
+            new Date(b.updatedAt).getTime() -
+            new Date(a.updatedAt).getTime()
+        )
+        .slice(0, 5),
+    [projects]
+    );
 
-        setRecentProjects(recent);
-
+    useEffect(() => {
+        console.log(`project changed`)
     }, [projects])
     
 

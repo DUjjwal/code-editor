@@ -12,7 +12,7 @@ import { error } from "@/lib/error"
 
 import { DashboardLeft } from "./DashboardLeft"
 import { DashboardRight } from "./DashbaordRight"
-
+import { usePlayground } from "@/store/playgroundStore"
 
 
 
@@ -21,6 +21,11 @@ export function Dashboard() {
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
+    //@ts-ignore
+    const updateProjects = usePlayground((state) => state.updateProjects)
+    
+      
+
     useEffect(() => {
         
         const checkIfLoggedIn = async () => {
@@ -28,6 +33,7 @@ export function Dashboard() {
             try {
                 await axios.get("http://localhost:4000/status",{withCredentials: true})
                 setLoading(false)
+                await updateProjects()
             }
             catch(err) {
                 error("Unauthenticated user Redirecting to home page");

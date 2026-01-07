@@ -64,6 +64,7 @@ export function Dropdown({id, call, starred}: {id: string, call: () => Promise<v
             }, {withCredentials: true})
 
             setFlag((p) => !p)
+            call()
 
         }catch(err) {
             console.log(err)
@@ -78,6 +79,7 @@ export function Dropdown({id, call, starred}: {id: string, call: () => Promise<v
             }, {withCredentials: true})
 
             setFlag((p) => !p)
+            call()
         }catch(err) {
             console.log(err)
             error("Try again")

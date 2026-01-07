@@ -8,11 +8,16 @@ interface project {
     createdAt: string,
     username: string,
     picture?: string,
-    starred: boolean
+    starred: boolean,
+    updatedAt: string
 }
 
+interface PlaygroundStore {
+  projects: project[];
+  updateProjects: () => Promise<void>;
+}
 
-export const usePlayground = create((set) => ({
+export const usePlayground = create<PlaygroundStore>((set) => ({
     projects: [],
     updateProjects: async () => {
         try {
@@ -29,7 +34,8 @@ export const usePlayground = create((set) => ({
                     createdAt: item.createdAt,
                     username: item.user.name,
                     picture: item.user.picture,
-                    starred: item.isMarked
+                    starred: item.isMarked,
+                    updatedAt: item.updatedAt
                 })
             })
 
