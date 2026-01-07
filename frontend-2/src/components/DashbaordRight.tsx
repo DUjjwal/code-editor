@@ -1,12 +1,13 @@
 import { Button } from "./ui/button"
 import {Plus, ArrowDown} from "lucide-react"
+import type { Dispatch, SetStateAction } from "react"
+
+import { Input } from "./ui/input"
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -14,6 +15,7 @@ import {
 
 
 import { Dropdown } from "./Dropdown"
+
 
 const invoices = [
   {
@@ -30,34 +32,124 @@ const invoices = [
   }
 ]
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { useState } from "react"
+
+const items = [
+    {
+        title: "React",
+        desc: "A JavaScript library for bulding user interfaces with component-based architecture",
+        tage: ["UI", "Frontend", "JavaScript"],
+        url: "../../../public/react.svg"
+    },
+    {
+        title: "Next.js",
+        desc: "The React framework for production with server-side rendering and static site generation",
+        tage: ["React", "SSR", "Fullstack"],
+        url: "../../../public/nextjs.svg"
+    },
+    {
+        title: "Express",
+        desc: "Fast, unopinionated, minimalist web framework for Node.js to build APIs and web applications",
+        tage: ["Node.js", "API", "Backend"],
+        url: "../../../public/express.svg"
+    },
+    {
+        title: "Vue.js",
+        desc: "Progressive JavaScript framework for building user interfaces with an approachable learning curve",
+        tage: ["UI", "Frontend", "JavaScript"],
+        url: "../../../public/vue.svg"
+    },
+    {
+        title: "Hono",
+        desc: "Fast, lightweight, built on Web Standards, Support for any JavaScript runtime.",
+        tage: ["Node.js", "TypeScript", "Backend"],
+        url: "../../../public/hono.svg"
+    },
+    {
+        title: "Angular",
+        desc: "Angular is a web framework that empowers developers to build fast, reliable applications.",
+        tage: ["React", "FullStack", "JavaScript"],
+        url: "../../../public/angular.svg"
+    }
+]
+
+
 
 export function DashboardRight() {
+
+    const [selected, setSelected] = useState<string>("")
+    const [name, setName] = useState<string>("")
+
+
+
     return (
-        <div className="h-screen">
+        <div className="w-full h-screen">
             <div className="w-full h-[20%] flex justify-center items-center p-2 gap-x-2">
-                <Button variant="outline" className="flex-1 h-[100%] flex justify-center">
-                    <div className="h-10 w-10 flex justify-center items-center">
-                        <Plus className="outline rounded-sm outline-1"/>
+                <div className="w-full flex-1 h-[100%] flex justify-center">
+                    <Dialog>
+                        <DialogTrigger  className="flex-1 h-[100%] flex justify-center">
+                            <Button variant="outline" className="flex-1 h-[100%] flex justify-center">
+                                <div className="h-10 w-10 flex justify-center items-center">
+                                    <Plus className="outline rounded-sm outline-1"/>
 
-                    </div>
-                    <div className="flex flex-col items-start">
-                    <p className="text-xl tracking-tight text-foreground">Add New</p>
-                    <p className="text-sm font-normal text-muted-foreground">Create a new playground</p>
-                    </div>
-                    
-                </Button>
-                <Button variant="outline" className="flex-1 h-[100%] flex justify-center">
-                    <div className="h-10 w-10 flex justify-center items-center">
-                        <ArrowDown className="outline rounded-sm outline-1"/>
+                                </div>
+                                <div className="flex flex-col items-start">
+                                <p className="text-xl tracking-tight text-foreground">Add New</p>
+                                <p className="text-sm font-normal text-muted-foreground">Create a new playground</p>
+                                </div>
+                                
+                            </Button>
 
-                    </div>
-                    <div className="text-left">
-                        <div className="flex flex-col items-start">
-                        <p className="text-xl tracking-tight text-foreground">Open Github Repository</p>
-                        <p className="text-sm font-normal text-muted-foreground">Work with your repositories in our editor</p>
+                        </DialogTrigger>
+                        <DialogContent className="w-[60vw] h-[80vh] max-w-none overflow-auto">
+                            <DialogTitle className="text-2xl text-foreground">
+                                Configure your Project
+                            </DialogTitle>
+                            <DialogTitle>
+                                Project Name
+                            </DialogTitle>
+                            <Input onChange={(e) => setName(e.target.value)}></Input>
+                            <DialogTitle className="text-foreground">
+                                Select a Template
+                            </DialogTitle>
+                            <DialogDescription className="text-muted-foreground">
+                                Choose a template to create your playground
+                            </DialogDescription>
+                            <div className="flex flex-wrap justify-center w-full gap-4">
+                                {items.map((item, i) => (
+                                    <Card key={i} title={item.title} desc={item.desc} tags={item.tage} url={item.url} selected={selected} setSelected={setSelected}/>
+                                ))}
+                            </div>
+                            <div className="w-full flex justify-center">
+                                <Button variant="outline" className="w-[20%]" onClick={() => console.log(name, selected)}>Create Project</Button>
+
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+                <div className="flex-1 h-[100%] flex justify-center">
+                    <Button variant="outline" className="flex-1 h-[100%] flex justify-center">
+                        <div className="h-10 w-10 flex justify-center items-center">
+                            <ArrowDown className="outline rounded-sm outline-1"/>
+
                         </div>
-                    </div>
-                </Button>
+                        <div className="text-left">
+                            <div className="flex flex-col items-start">
+                            <p className="text-xl tracking-tight text-foreground">Open Github Repository</p>
+                            <p className="text-sm font-normal text-muted-foreground">Work with your repositories in our editor</p>
+                            </div>
+                        </div>
+                    </Button>
+
+                </div>
             </div>
             <div className="pl-20 pr-20 pt-10 w-full">
 
@@ -96,4 +188,21 @@ export function DashboardRight() {
             </div>
         </div>
     )
+}
+
+function Card({title, desc, tags, url, selected, setSelected}: {url: string, title: string, desc: string, tags: string[], selected: string, setSelected: Dispatch<SetStateAction<string>>}) {
+  return (
+    <div className={`w-[48%] h-[200px] rounded-lg flex items-center justify-center ${selected === title ? "border border-gray-500" : "" } hover:border hober:bg-gray-500`} onClick={() => setSelected(title)}>
+        <div className="w-[30%] flex justify-center">
+            <img src={url} className="w-20 h-20" />
+        </div>
+        <div className="w-[70%] p-1">
+            <h1 className="text-lg text-foreground">{title}</h1>
+            <p className="text-sm text-muted-foreground">{desc}</p>
+            <div className="flex items-center justify-start pt-2">
+                {tags.map((item) => <div className="border border-muted text-sm p-1 rounded-xl text-foreground">{item}</div>)}
+            </div>
+        </div>
+    </div>
+  )
 }
