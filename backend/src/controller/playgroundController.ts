@@ -9,6 +9,14 @@ export const getAllPlayground = async (req: Request, res: Response, next: NextFu
         const playgrounds = await prisma.playground.findMany({
             where: {
                 userId: userId
+            },
+            include: {
+                user: {
+                    select: {
+                        name: true,
+                        picture: true
+                    }
+                }
             }
         })
 
@@ -46,7 +54,7 @@ export const createPlayground = async (req: Request, res: Response, next: NextFu
             message: "create success",
             playground
         })
-        
+
     }catch(err) {
         console.log(err)
         return res.status(400).json({

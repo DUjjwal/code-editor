@@ -18,21 +18,19 @@ import {
 
 import { Dropdown } from "./Dropdown"
 
+interface project {
+    title: string,
+    template: string,
+    createdAt: string,
+    username: string,
+    picture?: string
+}
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  }
-]
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 
 import {
   Dialog,
@@ -42,7 +40,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const items = [
     {
@@ -92,6 +90,37 @@ export function DashboardRight() {
 
     const [open,setOpen] = useState(false)
 
+    const [projects, setProjects] = useState<project[]>([])
+
+    const updateProjects = async () => {
+        try {
+            const res = await axios.get("http://localhost:4000/playground/all", {withCredentials: true})
+            console.log(res.data.playgrounds)
+
+            let tempProjects: project[] = []
+
+            res.data.playgrounds.forEach((item: any) => {
+                tempProjects.push({
+                    title: item.title,
+                    template: item.template,
+                    createdAt: item.createdAt,
+                    username: item.user.name,
+                    picture: item.user.picture
+                })
+            })
+
+            console.log(tempProjects)
+
+            setProjects(tempProjects)
+
+        }catch(err) {
+            error("Error fetching projects, Please Refersh")
+            return
+        }
+        
+
+    }
+
     const handleSubmit = async () => {
         if(name === "") {
             error("Enter Project Name")
@@ -124,6 +153,7 @@ export function DashboardRight() {
 
             
             success("Project Created Successfully")
+            updateProjects()
             setOpen(false)
             
         }catch(err) {
@@ -136,6 +166,19 @@ export function DashboardRight() {
 
     }
 
+    
+
+    useEffect(() => {
+        updateProjects()
+    }, [])
+
+    const color: any = {}
+    color["REACT"] = "text-violet-600 border-violet-600"
+    color["NEXTJS"] = "text-pink-600 border-pink-600"
+    color["ANGULAR"] = "text-lime-600 border-lime-600"
+    color["EXPRESS"] = "text-sky-600 border-sky-600"
+    color["VUE"] = "text-lime-600 border-lime-600"
+    color["HONO"] = "text-amber-600 border-amber-600"
 
 
     return (
@@ -202,7 +245,7 @@ export function DashboardRight() {
             <div className="pl-20 pr-20 pt-10 w-full">
 
                 {
-                    invoices.length > 0 ? 
+                    projects.length > 0 ? 
                         <Table className="w-full">
                             <TableHeader className="w-full">
                                 <TableRow className="text-left">
@@ -215,12 +258,33 @@ export function DashboardRight() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody className="text-left">
-                                {invoices.map((invoice) => (
-                                <TableRow key={invoice.invoice}>
-                                    <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                                    <TableCell>{invoice.paymentStatus}</TableCell>
-                                    <TableCell>{invoice.paymentMethod}</TableCell>
-                                    <TableCell>{invoice.totalAmount}</TableCell>
+                                {projects.map((project, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className="font-medium">{project.title}</TableCell>
+                                    <TableCell>
+                                        
+                                        <div className={`flex justify-center items-center border-2 rounded-xl w-auto font-semibold ${color[project.template]}`}>
+                                            {project.template}
+                                    
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        {new Date(project.createdAt).toLocaleString('en-US', {
+                                            month: 'long',
+                                            day: "2-digit",
+                                            year: "2-digit"
+                                        })}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex justify-start items-center gap-x-1">
+                                            <Avatar className="w-8 h-8">
+                                                <AvatarImage src={project.picture}></AvatarImage>
+                                                <AvatarFallback>
+                                                    {project.username[0].toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            {project.username}
+                                        </div></TableCell>
                                     <TableCell className="text-center">
                                         <Dropdown/>
                                     </TableCell>
