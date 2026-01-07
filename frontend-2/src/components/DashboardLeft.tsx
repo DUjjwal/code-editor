@@ -9,6 +9,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { usePlayground } from "@/store/playgroundStore"
+import { Avatar } from "./ui/avatar"
+import { AvatarImage } from "./ui/avatar"
+import { AvatarFallback } from "./ui/avatar"
 
 import { Home, Database, LayoutDashboard } from "lucide-react"
 import { useEffect, useMemo } from "react"
@@ -37,6 +40,7 @@ interface project {
     updatedAt: string
 }
 
+import { Star, FileChartLine } from "lucide-react"
 
 export function DashboardLeft() {
 
@@ -65,7 +69,14 @@ export function DashboardLeft() {
     }, [projects])
     
 
-    
+    const dict: any = {}
+
+    dict["REACT"] = "../../../public/react.svg"
+    dict["NEXTJS"] = "../../../public/nextjs.svg"
+    dict["EXPRESS"] = "../../../public/express.svg"
+    dict["VUE"] = "../../../public/vue.svg"
+    dict["HONO"] = "../../../public/hono.svg"
+    dict["ANGULAR"] = "../../../public/angular.svg"
     
 
 
@@ -97,9 +108,13 @@ export function DashboardLeft() {
                         starredProjects.length > 0 ? 
                             <SidebarMenu>
                                 {starredProjects.map((item) => (
-                                    <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
+                                    <SidebarMenuItem key={item.title} className="flex justify-start items-center mt-1">
+                                        
+                                    <SidebarMenuButton asChild className="p-1">
+                                        <div>
+                                            <Star/>
                                         <span>{item.title}</span>
+                                        </div>
                                     </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
@@ -119,9 +134,12 @@ export function DashboardLeft() {
                         recentProjects.length > 0 ? 
                             <SidebarMenu>
                                 {recentProjects.map((item) => (
-                                    <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuItem key={item.title} className="mt-1">
                                     <SidebarMenuButton asChild>
-                                        <span>{item.title}</span>
+                                        <div>
+                                            <FileChartLine/>
+                                            <span>{item.title}</span>
+                                        </div>
                                     </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
