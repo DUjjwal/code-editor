@@ -3,6 +3,8 @@ import {Plus, ArrowDown} from "lucide-react"
 import type { Dispatch, SetStateAction } from "react"
 
 import { Input } from "./ui/input"
+import { error, success } from "@/lib/error"
+import axios from "axios"
 
 import {
   Table,
@@ -47,13 +49,13 @@ const items = [
         title: "React",
         desc: "A JavaScript library for bulding user interfaces with component-based architecture",
         tage: ["UI", "Frontend", "JavaScript"],
-        url: "../../../public/react.svg"
+        url: "../../../public/react.svg",
     },
     {
         title: "Next.js",
         desc: "The React framework for production with server-side rendering and static site generation",
         tage: ["React", "SSR", "Fullstack"],
-        url: "../../../public/nextjs.svg"
+        url: "../../../public/nextjs.svg",
     },
     {
         title: "Express",
@@ -88,13 +90,59 @@ export function DashboardRight() {
     const [selected, setSelected] = useState<string>("")
     const [name, setName] = useState<string>("")
 
+    const [open,setOpen] = useState(false)
+
+    const handleSubmit = async () => {
+        if(name === "") {
+            error("Enter Project Name")
+            return
+        }
+        else if(selected === "") {
+            error("Select a template")
+            return
+        }
+
+        let template = ""
+        if(selected === "React") {
+            template = "REACT"
+        }else if(selected === "Next.js") {
+            template = "NEXTJS"
+        }else if(selected === "Express") {
+            template = "EXPRESS"
+        }else if(selected === "Vue.js") {
+            template = "VUE"
+        }else if(selected === "Hono") {
+            template = "HONO"
+        }else if(selected === "Angular") {
+            template = "ANGULAR"
+        }
+
+        try {
+            const res = await axios.post("http://localhost:4000/playground/create", {
+                template, title: name
+            }, {withCredentials: true})
+
+            
+            success("Project Created Successfully")
+            setOpen(false)
+            
+        }catch(err) {
+            console.log(err)
+            error("Error occured retry")
+            setOpen(false)
+        }
+
+        
+
+    }
+
 
 
     return (
         <div className="w-full h-screen">
             <div className="w-full h-[20%] flex justify-center items-center p-2 gap-x-2">
                 <div className="w-full flex-1 h-[100%] flex justify-center">
-                    <Dialog>
+                    <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger  className="flex-1 h-[100%] flex justify-center">
                             <Button variant="outline" className="flex-1 h-[100%] flex justify-center">
                                 <div className="h-10 w-10 flex justify-center items-center">
@@ -129,7 +177,7 @@ export function DashboardRight() {
                                 ))}
                             </div>
                             <div className="w-full flex justify-center">
-                                <Button variant="outline" className="w-[20%]" onClick={() => console.log(name, selected)}>Create Project</Button>
+                                <Button variant="outline" className="w-[20%]" onClick={handleSubmit}>Create Project</Button>
 
                             </div>
                         </DialogContent>
