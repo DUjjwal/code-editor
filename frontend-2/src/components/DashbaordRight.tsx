@@ -19,11 +19,13 @@ import {
 import { Dropdown } from "./Dropdown"
 
 interface project {
+    id: string,
     title: string,
     template: string,
     createdAt: string,
     username: string,
-    picture?: string
+    picture?: string,
+    starred: boolean
 }
 
 import {
@@ -100,14 +102,17 @@ export function DashboardRight() {
 
             res.data.playgrounds.forEach((item: any) => {
                 tempProjects.push({
+                    id: item.id,
                     title: item.title,
                     template: item.template,
                     createdAt: item.createdAt,
                     username: item.user.name,
-                    picture: item.user.picture
+                    picture: item.user.picture,
+                    starred: item.isMarked
                 })
             })
 
+            tempProjects.sort((a, b) => a.title.localeCompare(b.title))
             console.log(tempProjects)
 
             setProjects(tempProjects)
@@ -285,7 +290,7 @@ export function DashboardRight() {
                                             {project.username}
                                         </div></TableCell>
                                     <TableCell className="text-center">
-                                        <Dropdown/>
+                                        <Dropdown id={project.id} call={updateProjects} starred={project.starred}/>
                                     </TableCell>
                                 </TableRow>
                                 ))}
