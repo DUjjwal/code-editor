@@ -19,7 +19,6 @@ import { DashboardRight } from "./DashbaordRight"
 export function Dashboard() {
 
     const [loading, setLoading] = useState(true)
-
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -43,6 +42,19 @@ export function Dashboard() {
         
 
     }, [])
+
+    
+
+    useEffect(() => {
+        if(loading === false) {
+            const func = async () => {
+                const res = await axios.get("http://localhost:4000/playground/all",{withCredentials: true})
+                console.log(res.data)
+            }
+
+            func()
+        }
+    }, [loading])
 
 
     if(loading) {

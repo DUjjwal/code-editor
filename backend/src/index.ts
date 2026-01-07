@@ -3,6 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import { googleAuth } from "./lib/googleJWT.js"
 import { authMiddleware, status } from "./lib/middleware.js"
+import router from "./routes/playgroundRoutes.js"
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.use(cookieParser())
 
 app.post("/api/auth/google", googleAuth)
 app.get("/status", status)
+app.use("/playground", router)
 
 app.listen(4000, () => {
     console.log(`Server is running at port 4000`)
