@@ -284,7 +284,7 @@ export function DashboardRight() {
                                             {project.username}
                                         </div></TableCell>
                                     <TableCell className="text-center">
-                                        <Dropdown id={project.id} call={updateProjects} starred={project.starred}/>
+                                        <Dropdown id={project.id} call={updateProjects} starred={project.starred} name2={project.title} desc2={project.description || ""}/>
                                     </TableCell>
                                 </TableRow>
                                 ))}

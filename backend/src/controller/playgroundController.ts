@@ -179,3 +179,27 @@ export const unmarkPlayground = async (req: Request, res: Response, next: NextFu
 
     
 }
+
+export const editPlayground = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {title,description,id} = req.body
+    
+        await prisma.playground.update({
+            where: {id:id},
+            data: {
+                title,
+                description
+            }
+        })
+    
+        return res.status(200).json({
+            message: "update success"
+        })
+
+    }catch(err) {
+        console.log(err)
+        return res.status(400).json({
+            message: "update error"
+        })
+    }
+}
