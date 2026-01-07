@@ -4,14 +4,15 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { usePlayground } from "@/store/playgroundStore"
 
-import { Calendar, Home, Inbox, Search, Database, LayoutDashboard } from "lucide-react"
+import { Home, Database, LayoutDashboard } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { useEffect, useState } from "react"
 
 const items = [
   {
@@ -26,27 +27,50 @@ const items = [
   }
 ]
 
-const starredProjects: projects[] = [
-    {
-        title: "Project 1",
-        url: "#",
-        icon: Database
-    }
-]
-
-interface projects {
+interface project {
+    id: string,
     title: string,
-    url: string,
-    icon: LucideIcon
+    template: string,
+    createdAt: string,
+    username: string,
+    starred: boolean,
+    updatedAt: string
 }
 
-const recentProjects: projects[] = [
-    
-]
 
 export function DashboardLeft() {
 
+    //@ts-ignore
+    const projects: project[] = usePlayground((state) => state.projects)
+
+    console.log(projects)
+    const [starredProjects, setStarredProjects] = useState<project[]>([])
+    const [recentProjects, setRecentProjects] = useState<project[]>([])
     
+    useEffect(() => {
+
+        const starred = projects.filter(p => p.starred);
+        console.log("starred-", starred)
+        setStarredProjects(starred);
+
+        const recent = [...projects]
+            .sort(
+            (a, b) =>
+                new Date(b.updatedAt).getTime() -
+                new Date(a.updatedAt).getTime()
+            )
+            .slice(0, 5);
+
+        setRecentProjects(recent);
+
+    }, [projects])
+    
+
+    
+    
+
+
+
 
     return (
         <Sidebar className="w-[18%]">
@@ -76,10 +100,7 @@ export function DashboardLeft() {
                                 {starredProjects.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                        <item.icon />
                                         <span>{item.title}</span>
-                                        </a>
                                     </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
@@ -101,10 +122,7 @@ export function DashboardLeft() {
                                 {recentProjects.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                        <item.icon />
                                         <span>{item.title}</span>
-                                        </a>
                                     </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}

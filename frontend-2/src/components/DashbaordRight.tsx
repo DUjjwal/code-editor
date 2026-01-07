@@ -42,6 +42,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useEffect, useState } from "react"
+import { usePlayground } from "@/store/playgroundStore"
 
 const items = [
     {
@@ -91,39 +92,45 @@ export function DashboardRight() {
 
     const [open,setOpen] = useState(false)
 
-    const [projects, setProjects] = useState<project[]>([])
+    //@ts-ignore
+    const projects: project[] = usePlayground((state) => state.projects)
+    //@ts-ignore
+    const updateProjects = usePlayground((state) => state.updateProjects)
 
-    const updateProjects = async () => {
-        try {
-            const res = await axios.get("http://localhost:4000/playground/all", {withCredentials: true})
-            console.log(res.data.playgrounds)
 
-            let tempProjects: project[] = []
+    // const [projects, setProjects] = useState<project[]>([])
 
-            res.data.playgrounds.forEach((item: any) => {
-                tempProjects.push({
-                    id: item.id,
-                    title: item.title,
-                    template: item.template,
-                    createdAt: item.createdAt,
-                    username: item.user.name,
-                    picture: item.user.picture,
-                    starred: item.isMarked
-                })
-            })
+    // const updateProjects = async () => {
+    //     try {
+    //         const res = await axios.get("http://localhost:4000/playground/all", {withCredentials: true})
+    //         console.log(res.data.playgrounds)
 
-            tempProjects.sort((a, b) => a.title.localeCompare(b.title))
-            console.log(tempProjects)
+    //         let tempProjects: project[] = []
 
-            setProjects(tempProjects)
+    //         res.data.playgrounds.forEach((item: any) => {
+    //             tempProjects.push({
+    //                 id: item.id,
+    //                 title: item.title,
+    //                 template: item.template,
+    //                 createdAt: item.createdAt,
+    //                 username: item.user.name,
+    //                 picture: item.user.picture,
+    //                 starred: item.isMarked
+    //             })
+    //         })
 
-        }catch(err) {
-            error("Error fetching projects, Please Refersh")
-            return
-        }
+    //         tempProjects.sort((a, b) => a.title.localeCompare(b.title))
+    //         console.log(tempProjects)
+
+    //         setProjects(tempProjects)
+
+    //     }catch(err) {
+    //         error("Error fetching projects, Please Refersh")
+    //         return
+    //     }
         
 
-    }
+    // }
 
     const handleSubmit = async () => {
         if(name === "") {
