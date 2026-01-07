@@ -37,7 +37,7 @@ export const getAllPlayground = async (req: Request, res: Response, next: NextFu
 export const createPlayground = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-        const {title,template} = req.body
+        const {title,template, description} = req.body
         //@ts-ignore
         const userId = req.user
 
@@ -46,7 +46,8 @@ export const createPlayground = async (req: Request, res: Response, next: NextFu
             data: {
                 title: title,
                 template: template.toUpperCase(),
-                userId: userId
+                userId: userId,
+                description
             }
         })
 

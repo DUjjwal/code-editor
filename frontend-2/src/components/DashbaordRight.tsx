@@ -91,7 +91,8 @@ interface project {
     username: string,
     picture?: string,
     starred: boolean,
-    updatedAt: string
+    updatedAt: string,
+    description?: string
 }
 
 interface PlaygroundStore {
@@ -104,6 +105,7 @@ export function DashboardRight() {
 
     const [selected, setSelected] = useState<string>("")
     const [name, setName] = useState<string>("")
+    const [desc, setDesc] = useState<string>("")
 
     const [open,setOpen] = useState(false)
 
@@ -139,7 +141,7 @@ export function DashboardRight() {
 
         try {
             await axios.post("http://localhost:4000/playground/create", {
-                template, title: name
+                template, title: name, description: desc
             }, {withCredentials: true})
 
             
@@ -194,6 +196,10 @@ export function DashboardRight() {
                                 Project Name
                             </DialogTitle>
                             <Input onChange={(e) => setName(e.target.value)}></Input>
+                            <DialogTitle>
+                                Project Description
+                            </DialogTitle>
+                            <Input onChange={(e) => setDesc(e.target.value)} placeholder="Optional"></Input>
                             <DialogTitle className="text-foreground">
                                 Select a Template
                             </DialogTitle>
@@ -246,7 +252,13 @@ export function DashboardRight() {
                             <TableBody className="text-left">
                                 {projects.map((project, idx) => (
                                 <TableRow key={idx}>
-                                    <TableCell className="font-medium">{project.title}</TableCell>
+                                    <TableCell className="font-medium">
+                                        <div>
+                                            <p>{project.title}</p>
+                                            <p className="text-muted-foreground">{project.description}</p>
+                                            
+                                        </div>
+                                    </TableCell>
                                     <TableCell>
                                         
                                         <div className={`flex justify-center items-center border-2 rounded-xl w-auto font-semibold ${color[project.template]}`}>

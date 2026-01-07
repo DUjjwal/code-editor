@@ -37,7 +37,8 @@ interface project {
     username: string,
     picture?: string,
     starred: boolean,
-    updatedAt: string
+    updatedAt: string,
+    description?: string
 }
 
 import { Star, FileChartLine } from "lucide-react"

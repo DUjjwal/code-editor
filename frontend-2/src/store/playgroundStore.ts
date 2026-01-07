@@ -9,7 +9,8 @@ interface project {
     username: string,
     picture?: string,
     starred: boolean,
-    updatedAt: string
+    updatedAt: string,
+    description?: string
 }
 
 interface PlaygroundStore {
@@ -35,7 +36,8 @@ export const usePlayground = create<PlaygroundStore>((set) => ({
                     username: item.user.name,
                     picture: item.user.picture,
                     starred: item.isMarked,
-                    updatedAt: item.updatedAt
+                    updatedAt: item.updatedAt,
+                    description: item.description || ""
                 })
             })
 
