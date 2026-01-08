@@ -3,6 +3,7 @@ import {Route, Routes, BrowserRouter} from "react-router-dom"
 import { Dashboard } from './components/Dashboard'
 import { Home } from './components/Home'
 import { ToastContainer, Bounce } from 'react-toastify'
+import { Playground } from './components/Playground'
 
 function App() {
   
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>}></Route>
           <Route path="/dashboard" element={<Dashboard/>}></Route>
+          <Route path="/playground/:id" element={<Playground/>}></Route>
         </Routes>
         
       

@@ -1,5 +1,8 @@
-import { Request, Response, NextFunction } from "express"
+import e, { Request, Response, NextFunction } from "express"
 import {prisma} from "../lib/prisma.js"
+import { parseTemplateFolder } from "../lib/getTemplate.js"
+import path from "path"
+import { fileURLToPath } from "url";
 
 export const getAllPlayground = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -200,6 +203,74 @@ export const editPlayground = async (req: Request, res: Response, next: NextFunc
         console.log(err)
         return res.status(400).json({
             message: "update error"
+        })
+    }
+}
+
+export const getPlaygroundData = async (req: Request, res: Response, next: NextFunction) => {
+
+    const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+    const TEMPLATES_ROOT = path.resolve(__dirname, "../../starters-main");
+
+    const dict: Record<string, string> = {
+        REACT: path.join(TEMPLATES_ROOT, "react"),
+        ANGULAR: path.join(TEMPLATES_ROOT, "angular"),
+        NEXTJS: path.join(TEMPLATES_ROOT, "nextjs-shadcn"),
+        HONO: path.join(TEMPLATES_ROOT, "hono-nodejs-starter"),
+        VUE: path.join(TEMPLATES_ROOT, "vue"),
+        EXPRESS: path.join(TEMPLATES_ROOT, "express-simple"),
+    };
+
+    try {
+        const {id} = req.body
+
+        const data = await prisma.templateFile.findUnique({
+            where: {
+                id: id
+            }
+        })
+    
+        console.log(data)
+        if(!data) {
+            const playground = await prisma.playground.findUnique({
+                where: {
+                    id: id
+                }
+            })
+
+            console.log(playground)
+            const template: string = playground?.template!
+            
+            //@ts-ignore
+            const data = parseTemplateFolder(dict[template])
+            console.log(data)
+            const retData = await prisma.templateFile.create({
+                data: {
+                    content: JSON.stringify(data),
+                    playgroundId: id
+                }
+            })
+
+            return res.status(200).json({
+                message: "data success",
+                data: retData
+            })
+    
+        }else {
+
+            return res.status(200).json({
+                message: "success",
+                data: data
+            })
+
+        }
+
+    }catch(err) {
+        console.log(err)
+        return res.status(400).json({
+            message: "data fetch error"
         })
     }
 }
