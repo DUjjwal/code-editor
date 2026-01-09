@@ -228,7 +228,7 @@ const __dirname = path.dirname(__filename);
 
         const data = await prisma.templateFile.findUnique({
             where: {
-                id: id
+                playgroundId: id
             }
         })
     
