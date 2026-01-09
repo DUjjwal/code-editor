@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios"
-import { error } from "@/lib/error";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import {
   SidebarInset,

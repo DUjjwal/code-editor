@@ -41,7 +41,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { usePlayground } from "@/store/playgroundStore"
 
 const items = [
@@ -95,10 +95,6 @@ interface project {
     description?: string
 }
 
-interface PlaygroundStore {
-  projects: project[];
-  updateProjects: () => Promise<void>;
-}
 
 
 export function DashboardRight() {
