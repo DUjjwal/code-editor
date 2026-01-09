@@ -32,7 +32,7 @@ import {
 
 export function AppSidebar({ data2 }: { data2: any }) {
 
-  console.log(data2)
+  
 
   return (
     <Sidebar>
@@ -58,6 +58,9 @@ export function AppSidebar({ data2 }: { data2: any }) {
 
 function Tree({ item }: { item: any}) {
  
+        
+    item.id=123;
+
     //@ts-ignore
     const name = useFile((state) => state.name)
     //@ts-ignore
