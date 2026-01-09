@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios"
 import { error } from "@/lib/error";
@@ -26,6 +26,8 @@ export function Playground() {
 
     const { id } = useParams<{ id: string}>()
 
+    const [data, setData] = useState<string>("")
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -33,9 +35,9 @@ export function Playground() {
                     id: id
                 }, {withCredentials: true})
 
-                console.log(res.data)
-                console.log(JSON.parse(res.data.data.content))
+                setData(res.data.data)
 
+                
             }catch(err) {
                 console.log(err)
                 error("Error fetching playground data")
@@ -46,19 +48,21 @@ export function Playground() {
 
         fetchData()
     }, [])
+
+    if(!data) return <div>Loading...</div>
     
     return (
         <>
         <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar data2={JSON.parse(data)}/>
         <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator
+            {/* <Separator
                 orientation="vertical"
                 className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
+            /> */}
+            {/* <Breadcrumb>
                 <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
                     <BreadcrumbLink href="#">components</BreadcrumbLink>
@@ -72,16 +76,9 @@ export function Playground() {
                     <BreadcrumbPage>button.tsx</BreadcrumbPage>
                 </BreadcrumbItem>
                 </BreadcrumbList>
-            </Breadcrumb>
+            </Breadcrumb> */}
             </header>
-            <div className="flex flex-1 flex-col gap-4 p-4">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div className="bg-muted/50 aspect-video rounded-xl" />
-                <div className="bg-muted/50 aspect-video rounded-xl" />
-                <div className="bg-muted/50 aspect-video rounded-xl" />
-            </div>
-            <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
-            </div>
+            body
         </SidebarInset>
         </SidebarProvider>
         </>

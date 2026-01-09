@@ -232,7 +232,6 @@ const __dirname = path.dirname(__filename);
             }
         })
     
-        console.log(data)
         if(!data) {
             const playground = await prisma.playground.findUnique({
                 where: {
@@ -240,12 +239,11 @@ const __dirname = path.dirname(__filename);
                 }
             })
 
-            console.log(playground)
             const template: string = playground?.template!
-            
+            console.log(template)
             //@ts-ignore
             const data = parseTemplateFolder(dict[template])
-            console.log(data)
+            
             const retData = await prisma.templateFile.create({
                 data: {
                     content: JSON.stringify(data),
@@ -255,14 +253,14 @@ const __dirname = path.dirname(__filename);
 
             return res.status(200).json({
                 message: "data success",
-                data: retData
+                data: retData.content
             })
     
         }else {
 
             return res.status(200).json({
                 message: "success",
-                data: data
+                data: data.content
             })
 
         }
