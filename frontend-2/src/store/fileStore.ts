@@ -24,10 +24,12 @@ export const useTree = create((set) => ({
             // console.log(res2.data.data)
             set({data: res2.data.data})
 
+            return true
+
         }catch(err) {
             console.log(err)
             error("Error loading files redirecting to dashboard")
-            // navigate("/dashboard")
+            return false
         }
     }
 }))

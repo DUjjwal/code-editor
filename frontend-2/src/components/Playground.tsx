@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   SidebarInset,
@@ -16,6 +16,7 @@ import { useTree } from "@/store/fileStore";
 export function Playground() {
 
     const { id } = useParams<{ id: string}>()
+    const navigate = useNavigate()
 
     //@ts-ignore
     const updateData = useTree((state) => state.updateData)
@@ -25,8 +26,12 @@ export function Playground() {
 
     useEffect(() => {
         const fn = async () => {
-            await updateData({id})
-        } 
+            const res = await updateData({id})
+            if(!res) {
+                navigate("/dashboard")
+            }
+        }
+
         // updateData({id})    
         fn()
 

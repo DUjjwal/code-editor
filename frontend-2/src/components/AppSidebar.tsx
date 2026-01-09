@@ -5,6 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+
 import {
   Sidebar,
   SidebarContent,
@@ -17,8 +18,9 @@ import {
   SidebarMenuSub,
   SidebarRail,
 } from "@/components/ui/sidebar"
+
 import { useFile, useTree } from "@/store/fileStore"
-import { FilePlus, FolderPlus, PencilLine, Trash,Ellipsis, EllipsisVertical } from "lucide-react"
+import { FilePlus, FolderPlus, PencilLine, Trash,Ellipsis, EllipsisVertical, Plus } from "lucide-react"
 
 import axios from "axios"
 
@@ -42,6 +44,9 @@ import {
 import { Input } from "./ui/input"
 import { useState } from "react"
 
+import { Button } from "./ui/button"
+import { useParams } from "react-router-dom"
+
 const handleRename = async ({item, newName}: {item: any, newName: string}) => {
     try {
         const fileId = item.id
@@ -50,8 +55,6 @@ const handleRename = async ({item, newName}: {item: any, newName: string}) => {
             fileId,
             name: newName
         }, {withCredentials: true})
-
-        
 
     }catch(err) {
         console.log(err)
@@ -77,21 +80,72 @@ const handleDelete = async ({item}: {item: any}) => {
     
 }
 
-import { Button } from "./ui/button"
-import { useParams } from "react-router-dom"
+const handleFile = async ({name, parentId, type, playgroundId}: {name: string, parentId: number | null,type: string, playgroundId: string}) => {
 
-export function AppSidebar({}: { }) {
+    try {
+        await axios.post("http://localhost:4000/playground/createfile",{
+            name,
+            parentId,
+            type,
+            playgroundId
+        }, {withCredentials: true})
+
+    }catch(err) {
+        console.log(err)
+        error(`${type} creation failed`)
+    }
+
+
+}
+
+
+export function AppSidebar() {
 
     //@ts-ignore
     const data2 = useTree((state) => state.data)
 
-    
+    const [fileName, setFileName] = useState<string>("")
+    const [type, setType] = useState<string>("")
+    const [open, setOpen] = useState<boolean>(false)
+
+    //@ts-ignore
+    const updateData = useTree((state) => state.updateData)
+
+    const { id } = useParams<{ id: string}>()
+  
     
   return (
+    <>
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>File Explorer</SidebarGroupLabel>
+            <SidebarGroupLabel className="flex justify-between items-center">
+                File Explorer
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <Plus className="w-4 h-4 hover:bg-gray-100 hover:rounded-sm"/>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem onClick={() => {
+                                setType("FILE")
+                                setOpen(true)
+                            }}>
+                                <FilePlus/>
+                                New File
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                                setType("FOLDER")
+                                setOpen(true)
+                            }}>
+                                <FolderPlus/>
+                                New Folder
+                            </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </SidebarGroupLabel>
           
           <SidebarGroupContent>
             <SidebarMenu>
@@ -105,6 +159,25 @@ export function AppSidebar({}: { }) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
+    <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+            <DialogTitle>
+                {type} Name
+            </DialogTitle>
+            <Input value={fileName} onChange={(e) => setFileName(e.target.value)}></Input>
+            <Button variant="outline" onClick={async () => {
+                if(fileName === "") {
+                    error(`${type} name is empty`)
+                }
+                else {
+                    await handleFile({name: fileName, parentId: data2.id, type, playgroundId: id!})
+                    await updateData({id})
+                    setOpen(false)
+                }
+            }}>Create {type}</Button>
+        </DialogContent>
+    </Dialog>
+    </>
   )
 }
 
@@ -126,6 +199,11 @@ function Tree({ item }: { item: any}) {
 
     //@ts-ignore
     const updateData = useTree((state) => state.updateData)
+
+
+    const [open2, setOpen2] = useState<boolean>(false)
+    const [fileName, setFileName] = useState<string>("")
+    const [type, setType] = useState<string>("")
   
   if (item.type === "FILE") {
     return (
@@ -212,11 +290,17 @@ function Tree({ item }: { item: any}) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                                setType("FILE")
+                                setOpen2(true)
+                            }}>
                                 <FilePlus/>
                                 New File
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                                setType("FOLDER")
+                                setOpen2(true)
+                            }}>
                                 <FolderPlus/>
                                 New Folder
                             </DropdownMenuItem>
@@ -270,7 +354,26 @@ function Tree({ item }: { item: any}) {
                 }}>Save Changes</Button>
             </DialogContent>
         </Dialog>
-    
+        
+        <Dialog open={open2} onOpenChange={setOpen2}>
+            <DialogContent>
+                <DialogTitle>
+                    {type} Name
+                </DialogTitle>
+                <Input value={fileName} onChange={(e) => setFileName(e.target.value)}></Input>
+                <Button variant="outline" onClick={async () => {
+                    if(fileName === "") {
+                        error(`${type} name is empty`)
+                    }
+                    else {
+                        await handleFile({name: fileName, parentId: item.id, type, playgroundId: id!})
+                        await updateData({id})
+                        setOpen2(false)
+                    }
+                }}>Create {type}</Button>
+            </DialogContent>
+        </Dialog>
     </>
   )
 }
+

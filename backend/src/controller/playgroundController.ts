@@ -521,5 +521,56 @@ export const deleteFile = async (req: Request, res: Response, next: NextFunction
     
 }
 
+export const createFile = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+        const {name, type, parentId, playgroundId} = req.body
+
+        //checking if playground belongs to that user
+
+        const playground = await prisma.playground.findUnique({
+            where: {
+                id: playgroundId
+            }
+        })
+
+        //@ts-ignore
+        if(playground?.userId === req.user) {
+
+            const file = await prisma.file.create({
+                data: {
+                    name,
+                    content: "",
+                    parentId,
+                    playgroundId,
+                    type
+                }
+            })
+
+
+            return res.status(200).json({
+                message: "file create success",
+                file
+            })
+
+
+        }else {
+            return res.status(400).json({
+                message: "access denied"
+            })
+        }
+
+
+    }catch(err) {
+        console.log(err)
+        return res.status(400).json({
+            message: "file create error"
+        })
+    }
+
+    
+
+}
+
 
 
