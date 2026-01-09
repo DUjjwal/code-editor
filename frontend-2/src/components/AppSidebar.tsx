@@ -17,8 +17,10 @@ import {
   SidebarMenuSub,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { useFile } from "@/store/fileStore"
+import { useFile, useTree } from "@/store/fileStore"
 import { FilePlus, FolderPlus, PencilLine, Trash,Ellipsis, EllipsisVertical } from "lucide-react"
+
+import axios from "axios"
 
 import {
   DropdownMenu,
@@ -29,10 +31,51 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function AppSidebar({ data2 }: { data2: any }) {
+import { error } from "@/lib/error"
+import { useEffect } from "react"
 
-  data2 = JSON.parse(data2)
+const handleRename = async ({item, newName}: {item: any, newName: string}) => {
+    try {
+        const fileId = item.id
 
+        await axios.post("http://localhost:4000/playground/rename", {
+            fileId,
+            name: newName
+        }, {withCredentials: true})
+
+        
+
+    }catch(err) {
+        console.log(err)
+        error("File rename failed")
+    }
+    
+}
+
+const handleDelete = async ({item}: {item: any}) => {
+    try {
+        const fileId = item.id
+
+        await axios.post("http://localhost:4000/playground/deletefile", {
+            fileId
+        }, {withCredentials: true})
+
+        
+
+    }catch(err) {
+        console.log(err)
+        error("File delete failed")
+    }
+    
+}
+
+export function AppSidebar({}: { }) {
+
+    //@ts-ignore
+    const data2 = useTree((state) => state.data)
+
+    
+    
   return (
     <Sidebar>
       <SidebarContent>

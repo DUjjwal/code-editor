@@ -1,18 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios"
 import { error } from "@/lib/error";
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-
-import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
@@ -20,6 +10,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import { AppSidebar } from "./AppSidebar";
+import { useTree } from "@/store/fileStore";
 
 
 
@@ -28,34 +19,27 @@ export function Playground() {
 
     const { id } = useParams<{ id: string}>()
 
-    const [data, setData] = useState<string>("")
+    //@ts-ignore
+    const updateData = useTree((state) => state.updateData)
+
+    //@ts-ignore
+    const data = useTree((state) => state.data)
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res2 = await axios.post("http://localhost:4000/playground/files", {
-                    id: id
-                }, {withCredentials: true})
+        const fn = async () => {
+            await updateData({id})
+        } 
+        // updateData({id})    
+        fn()
 
-                setData(JSON.stringify(res2.data.data))
-                
-            }catch(err) {
-                console.log(err)
-                error("Error fetching playground data")
-            }
-
-
-        }
-
-        fetchData()
     }, [])
 
-    if(!data) return <div>Loading...</div>
+    if(!data.id) return <div>Loading...</div>
     
     return (
         <>
         <SidebarProvider>
-        <AppSidebar data2={data}/>
+        <AppSidebar/>
         <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />

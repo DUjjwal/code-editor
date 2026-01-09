@@ -413,3 +413,113 @@ export const getPlaygroundFiles = async (req: Request, res: Response, next: Next
         })
     }
 }
+
+export const renameFile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {fileId, name} = req.body
+
+        //checking if that file belongs to that user
+        const file = await prisma.file.findUnique({
+            where: {
+                id: fileId
+            }
+        })
+
+        
+        const playgroundId = file?.playgroundId
+        
+        const playground = await prisma.playground.findUnique({
+            where: {
+                id: playgroundId!
+            }
+        })
+
+        //@ts-ignore
+        if(playground?.userId === req.user) {
+            const file = await prisma.file.update({
+                where: {
+                    id: fileId
+                },
+                data: {
+                    name
+                }
+            })
+
+            return res.status(200).json({
+                message: "rename success",
+                file
+            })
+        }
+        else {
+            return res.status(400).json({
+                message: "access denied"
+            })
+        }
+
+
+
+        
+    }catch(err) {
+        console.log(err)
+        return res.status(400).json({
+            message: "rename error"
+        })
+    }
+}
+
+export const deleteFile = async (req: Request, res: Response, next: NextFunction) => {
+
+
+    try {
+        const {fileId} = req.body
+
+        //checking if that file belongs to that user
+        const file = await prisma.file.findUnique({
+            where: {
+                id: fileId
+            }
+        })
+
+        
+        const playgroundId = file?.playgroundId
+        
+        const playground = await prisma.playground.findUnique({
+            where: {
+                id: playgroundId!
+            }
+        })
+
+        //@ts-ignore
+        if(playground?.userId === req.user) {
+            await prisma.file.delete({
+                where: {
+                    id: fileId
+                }
+            })
+
+            return res.status(200).json({
+                message: "delete success",
+            })
+        }
+        else {
+            return res.status(400).json({
+                message: "access denied"
+            })
+        }
+
+
+
+        
+    }catch(err) {
+        console.log(err)
+        return res.status(400).json({
+            message: "delete error"
+        })
+    }
+
+
+    
+}
+
+
+
