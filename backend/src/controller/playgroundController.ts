@@ -37,39 +37,39 @@ export const getAllPlayground = async (req: Request, res: Response, next: NextFu
 
 }
 
-export const createPlayground = async (req: Request, res: Response, next: NextFunction) => {
+// export const createPlayground = async (req: Request, res: Response, next: NextFunction) => {
 
-    try {
-        const {title,template, description} = req.body
-        //@ts-ignore
-        const userId = req.user
+//     try {
+//         const {title,template, description} = req.body
+//         //@ts-ignore
+//         const userId = req.user
 
         
-        const playground = await prisma.playground.create({
-            data: {
-                title: title,
-                template: template.toUpperCase(),
-                userId: userId,
-                description
-            }
-        })
+//         const playground = await prisma.playground.create({
+//             data: {
+//                 title: title,
+//                 template: template.toUpperCase(),
+//                 userId: userId,
+//                 description
+//             }
+//         })
 
-        return res.status(200).json({
-            message: "create success",
-            playground
-        })
+//         return res.status(200).json({
+//             message: "create success",
+//             playground
+//         })
 
-    }catch(err) {
-        console.log(err)
-        return res.status(400).json({
-            message: "db error"
-        })
-    }
+//     }catch(err) {
+//         console.log(err)
+//         return res.status(400).json({
+//             message: "db error"
+//         })
+//     }
     
 
 
 
-}
+// }
 
 export const deletePlayground = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -207,68 +207,209 @@ export const editPlayground = async (req: Request, res: Response, next: NextFunc
     }
 }
 
-export const getPlaygroundData = async (req: Request, res: Response, next: NextFunction) => {
+// export const getPlaygroundData = async (req: Request, res: Response, next: NextFunction) => {
 
-    const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+//     const __filename = fileURLToPath(import.meta.url);
+//     const __dirname = path.dirname(__filename);
 
-    const TEMPLATES_ROOT = path.resolve(__dirname, "../../starters-main");
+//     const TEMPLATES_ROOT = path.resolve(__dirname, "../../starters-main");
 
-    const dict: Record<string, string> = {
-        REACT: path.join(TEMPLATES_ROOT, "react"),
-        ANGULAR: path.join(TEMPLATES_ROOT, "angular"),
-        NEXTJS: path.join(TEMPLATES_ROOT, "nextjs-shadcn"),
-        HONO: path.join(TEMPLATES_ROOT, "hono-nodejs-starter"),
-        VUE: path.join(TEMPLATES_ROOT, "vue"),
-        EXPRESS: path.join(TEMPLATES_ROOT, "express-simple"),
-    };
+//     const dict: Record<string, string> = {
+//         REACT: path.join(TEMPLATES_ROOT, "react"),
+//         ANGULAR: path.join(TEMPLATES_ROOT, "angular"),
+//         NEXTJS: path.join(TEMPLATES_ROOT, "nextjs-shadcn"),
+//         HONO: path.join(TEMPLATES_ROOT, "hono-nodejs-starter"),
+//         VUE: path.join(TEMPLATES_ROOT, "vue"),
+//         EXPRESS: path.join(TEMPLATES_ROOT, "express-simple"),
+//     };
 
+//     try {
+//         const {id} = req.body
+
+//         const data = await prisma.templateFile.findUnique({
+//             where: {
+//                 playgroundId: id
+//             }
+//         })
+    
+//         if(!data) {
+//             const playground = await prisma.playground.findUnique({
+//                 where: {
+//                     id: id
+//                 }
+//             })
+
+//             const template: string = playground?.template!
+//             console.log(template)
+//             //@ts-ignore
+//             const data = parseTemplateFolder(dict[template])
+            
+//             const retData = await prisma.templateFile.create({
+//                 data: {
+//                     content: JSON.stringify(data),
+//                     playgroundId: id
+//                 }
+//             })
+
+//             return res.status(200).json({
+//                 message: "data success",
+//                 data: retData.content
+//             })
+    
+//         }else {
+
+//             return res.status(200).json({
+//                 message: "success",
+//                 data: data.content
+//             })
+
+//         }
+
+//     }catch(err) {
+//         console.log(err)
+//         return res.status(400).json({
+//             message: "data fetch error"
+//         })
+//     }
+// }
+
+
+export const createPlaygroundLatest = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {id} = req.body
+        const {title,template, description} = req.body
+        //@ts-ignore
+        const userId = req.user
 
-        const data = await prisma.templateFile.findUnique({
-            where: {
-                playgroundId: id
+        
+        const playground = await prisma.playground.create({
+            data: {
+                title: title,
+                template: template.toUpperCase(),
+                userId: userId,
+                description
             }
         })
-    
-        if(!data) {
-            const playground = await prisma.playground.findUnique({
-                where: {
-                    id: id
-                }
-            })
 
-            const template: string = playground?.template!
-            console.log(template)
-            //@ts-ignore
-            const data = parseTemplateFolder(dict[template])
-            
-            const retData = await prisma.templateFile.create({
+        //creating files
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+
+        const TEMPLATES_ROOT = path.resolve(__dirname, "../../starters-main");
+
+        const dict: Record<string, string> = {
+            REACT: path.join(TEMPLATES_ROOT, "react"),
+            ANGULAR: path.join(TEMPLATES_ROOT, "angular"),
+            NEXTJS: path.join(TEMPLATES_ROOT, "nextjs-shadcn"),
+            HONO: path.join(TEMPLATES_ROOT, "hono-nodejs-starter"),
+            VUE: path.join(TEMPLATES_ROOT, "vue"),
+            EXPRESS: path.join(TEMPLATES_ROOT, "express-simple"),
+        };
+
+        //@ts-ignore
+        const data = parseTemplateFolder(dict[playground.template])
+
+
+        const createFile = async ({name, content, type, parentId, playgroundId}: {name: string, content?: string, type: string, parentId?: number, playgroundId: string}) => {
+
+            const file = await prisma.file.create({
                 data: {
-                    content: JSON.stringify(data),
-                    playgroundId: id
+                    name,
+                    //@ts-ignore
+                    type: type.toUpperCase(),
+                    content: content ?? "",
+                    parentId: parentId ?? null,
+                    playgroundId
                 }
             })
 
-            return res.status(200).json({
-                message: "data success",
-                data: retData.content
-            })
-    
-        }else {
-
-            return res.status(200).json({
-                message: "success",
-                data: data.content
-            })
+            return file
 
         }
+
+
+        const generateFiles = async ({item, parentId}: {item: any, parentId?: number}) => {
+            if(item.filename) {
+                //@ts-ignore
+                const file = await createFile({name: item.filename+"."+item.fileExtension, type: "FILE", content: item.content, parentId, playgroundId: playground.id})
+                
+                return
+            }
+            else {
+                //@ts-ignore
+                const file = await createFile({name: item.folderName, type: "FOLDER", content: null, parentId, playgroundId: playground.id})
+
+                item.items.forEach((i: any) => generateFiles({item: i, parentId: file.id}))
+                
+            }
+        }
+
+        generateFiles({item: data})
+
+        return res.status(200).json({
+            message: "create success",
+            playground
+        })
 
     }catch(err) {
         console.log(err)
         return res.status(400).json({
-            message: "data fetch error"
+            message: "db error"
+        })
+    }
+}
+
+export const getPlaygroundFiles = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {id} = req.body
+
+        const files = await prisma.file.findMany({
+            where: {
+                playgroundId: id
+            }
+        })
+
+        let root = null
+        const map: any = {}
+
+        files.forEach((item: any) => {
+            if(!item.parentId) {
+                root = item
+                return
+            }
+            if(!map[item.parentId])
+                map[item.parentId] = []
+
+            map[item.parentId].push(item)
+        })
+
+        const buildTree = ({item}: {item: any}) => {
+            const childrens = map[item.id]
+
+            if(!childrens) {
+                return {...item, items: []}
+            }
+
+            return {
+                ...item,
+                items: childrens.map((item: any) => buildTree({item}))
+            }
+        }
+
+        const obj = buildTree({item: root})
+
+        
+
+        return res.status(200).json({
+            message: "file success",
+            data: obj
+        })
+
+
+
+    }catch(err) {
+        console.log(err)
+        return res.status(400).json({
+            message: "file error"
         })
     }
 }

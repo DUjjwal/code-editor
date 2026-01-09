@@ -1,4 +1,3 @@
-import { Plus } from "lucide-react"
 import { File, Folder } from "lucide-react"
 
 import {
@@ -32,7 +31,7 @@ import {
 
 export function AppSidebar({ data2 }: { data2: any }) {
 
-  
+  data2 = JSON.parse(data2)
 
   return (
     <Sidebar>
@@ -58,24 +57,24 @@ export function AppSidebar({ data2 }: { data2: any }) {
 
 function Tree({ item }: { item: any}) {
  
-        
-    item.id=123;
+
+    // item.id=123;
 
     //@ts-ignore
     const name = useFile((state) => state.name)
     //@ts-ignore
     const setActive = useFile((state) => state.setActive)
   
-  if (item.filename) {
+  if (item.type === "FILE") {
     return (
       <SidebarMenuButton
         className="data-[active=true]:bg-transparent flex justify-between items-center"
-        isActive={name === (item.filename+"."+item.fileExtension)}
-        onClick={() => setActive({filename: item.filename,fileExtension: item.fileExtension,fileContent: item.content})}
+        isActive={name === (item.name)}
+        onClick={() => setActive({name: item.name, content: item.content, id: item.id})}
       >
         <div className="flex gap-x-2">
                 <File className="w-4 h-4"/>
-                {item.filename + "." + item.fileExtension}
+                {item.name}
       
 
         </div>
@@ -115,7 +114,7 @@ function Tree({ item }: { item: any}) {
                 {/* <ChevronRight className="transition-transform" /> */}
                 <div className="flex gap-x-2">
                     <Folder className="w-4 h-4"/>
-                    {item.folderName}
+                    {item.name}
 
                 </div>
                 <DropdownMenu>

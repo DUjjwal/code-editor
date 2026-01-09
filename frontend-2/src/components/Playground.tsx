@@ -22,6 +22,8 @@ import {
 import { AppSidebar } from "./AppSidebar";
 
 
+
+
 export function Playground() {
 
     const { id } = useParams<{ id: string}>()
@@ -31,12 +33,11 @@ export function Playground() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.post("http://localhost:4000/playground/data", {
+                const res2 = await axios.post("http://localhost:4000/playground/files", {
                     id: id
                 }, {withCredentials: true})
 
-                setData(res.data.data)
-
+                setData(JSON.stringify(res2.data.data))
                 
             }catch(err) {
                 console.log(err)
@@ -54,7 +55,7 @@ export function Playground() {
     return (
         <>
         <SidebarProvider>
-        <AppSidebar data2={JSON.parse(data)}/>
+        <AppSidebar data2={data}/>
         <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />

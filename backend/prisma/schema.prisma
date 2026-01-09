@@ -35,31 +35,23 @@ model Playground {
   updatedAt          DateTime    @updatedAt
   userId             String
   user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  templateFiles      TemplateFile[]
-  // files              File[]
+  files              File[]
 }
 
-model TemplateFile {
-  id                 String     @id @default(cuid())
-  content            String     
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  playgroundId       String     @unique
-  playground         Playground @relation(fields: [playgroundId], references: [id], onDelete: Cascade)
+
+
+enum FileType {
+  FILE
+  FOLDER
 }
 
-// enum FileType {
-//   FILE
-//   FOLDER
-// }
+model File {
+  id                 Int    @id @default(autoincrement())
+  name               String 
+  type               FileType
+  content            String?
+  parentId           Int?
+  playgroundId       String
+  playground         Playground  @relation(fields: [playgroundId], references: [id], onDelete: Cascade)
 
-// model File {
-//   id                 Int    @id @default(autoincrement())
-//   name               String 
-//   type               FileType
-//   content            String?
-//   parentId           Int?
-//   playgroundId       String
-//   playground         Playground  @relation(fields: [playgroundId], references: [id], onDelete: Cascade)
-
-// }
+}
