@@ -32,7 +32,18 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { error } from "@/lib/error"
-import { useEffect } from "react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+import { Input } from "./ui/input"
+import { useState } from "react"
 
 const handleRename = async ({item, newName}: {item: any, newName: string}) => {
     try {
@@ -69,6 +80,9 @@ const handleDelete = async ({item}: {item: any}) => {
     
 }
 
+import { Button } from "./ui/button"
+import { useParams } from "react-router-dom"
+
 export function AppSidebar({}: { }) {
 
     //@ts-ignore
@@ -100,16 +114,25 @@ export function AppSidebar({}: { }) {
 
 function Tree({ item }: { item: any}) {
  
+    const { id } = useParams<{ id: string}>()
 
+    
+    const [open, setOpen] = useState<boolean>(false)
+
+    const [newName, setNewName] = useState<string>(item.name)
     // item.id=123;
 
     //@ts-ignore
     const name = useFile((state) => state.name)
     //@ts-ignore
     const setActive = useFile((state) => state.setActive)
+
+    //@ts-ignore
+    const updateData = useTree((state) => state.updateData)
   
   if (item.type === "FILE") {
     return (
+        <>
       <SidebarMenuButton
         className="data-[active=true]:bg-transparent flex justify-between items-center"
         isActive={name === (item.name)}
@@ -127,14 +150,20 @@ function Tree({ item }: { item: any}) {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem className="text-foreground">
+                    <DropdownMenuItem className="text-foreground" onClick={() => {
+                        console.log("clicked")
+                        setOpen(true)
+                    }}>
                         <PencilLine/>
                         Rename
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator/>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={async () =>  {
+                        await handleDelete({item})
+                        await updateData({id})
+                    }}>
                         <Trash/>
                         Delete
                     </DropdownMenuItem>
@@ -142,6 +171,26 @@ function Tree({ item }: { item: any}) {
             </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuButton>
+      <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent>
+                <DialogTitle>
+                    Rename {item.type.toLowerCase()}
+                </DialogTitle>
+                <Input value={newName} onChange={(e) => setNewName(e.target.value)}></Input>
+                <Button variant="outline" onClick={async () => {
+                    if(newName === "") {
+                        error("File name is empty")
+                    }
+                    else {
+                        await handleRename({item, newName})
+                        await updateData({id})
+                        setOpen(false)
+                    }
+                }}>Save Changes</Button>
+            </DialogContent>
+        </Dialog>
+    
+        </>
     )
   }
 
@@ -177,14 +226,17 @@ function Tree({ item }: { item: any}) {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
-                            <DropdownMenuItem className="text-foreground">
+                            <DropdownMenuItem className="text-foreground" onClick={() => setOpen(true)}>
                                 <PencilLine/>
                                 Rename
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={async () =>  {
+                                await handleDelete({item})
+                                await updateData({id})
+                            }}>
                                 <Trash/>
                                 Delete
                             </DropdownMenuItem>
@@ -203,7 +255,24 @@ function Tree({ item }: { item: any}) {
             </CollapsibleContent>
         </Collapsible>
         </SidebarMenuItem>
-        
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent>
+                <DialogTitle>
+                    Rename {item.type.toLowerCase()}
+                </DialogTitle>
+                <Input value={newName} onChange={(e) => setNewName(e.target.value)}></Input>
+                <Button variant="outline" onClick={async () => {
+                    if(newName === "") {
+                        error("File name is empty")
+                    }
+                    else {
+                        await handleRename({item, newName})
+                        await updateData({id})
+                        setOpen(false)
+                    }
+                }}>Save Changes</Button>
+            </DialogContent>
+        </Dialog>
     
     </>
   )
