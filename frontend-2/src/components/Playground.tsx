@@ -143,7 +143,7 @@ function Header2() {
 
     return (
         <>
-            <header className="flex h-10 shrink-0 items-center gap-2 border-b px-4">
+            <header className="flex h-10 shrink-0 items-center gap-2 px-4">
                 {headers.map((item, idx) => (
                     <Button variant="outline" className={`w-fit px-3 ${headersId[idx] === activeId ? "text-foreground" : "text-muted-foreground"} flex items-center gap-1`} onClick={() => setActive(headersId[idx])}>
                         {item}
