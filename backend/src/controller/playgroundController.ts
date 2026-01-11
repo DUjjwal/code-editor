@@ -368,6 +368,14 @@ export const getPlaygroundFiles = async (req: Request, res: Response, next: Next
             }
         })
 
+        const filesMap: Record<number,string> = {}
+
+        files.forEach((item) => filesMap[item.id] = item.content ?? "") 
+
+        const namesMap: Record<number,string> = {}
+
+        files.forEach((item) => namesMap[item.id] = item.name) 
+
         let root = null
         const map: any = {}
 
@@ -401,7 +409,9 @@ export const getPlaygroundFiles = async (req: Request, res: Response, next: Next
 
         return res.status(200).json({
             message: "file success",
-            data: obj
+            data: obj,
+            filesMap,
+            namesMap
         })
 
 
@@ -572,5 +582,61 @@ export const createFile = async (req: Request, res: Response, next: NextFunction
 
 }
 
+
+export const saveFile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {fileId, content} = req.body
+
+        //checking if that file belongs to that user
+        const file = await prisma.file.findUnique({
+            where: {
+                id: fileId
+            }
+        })
+
+        
+        const playgroundId = file?.playgroundId
+        
+        const playground = await prisma.playground.findUnique({
+            where: {
+                id: playgroundId!
+            }
+        })
+
+        //@ts-ignore
+        if(playground?.userId === req.user) {
+            
+            await prisma.file.update({
+                where: {
+                    id: fileId
+                },
+                data: {
+                    content
+                }
+            })
+
+            return res.status(200).json({
+                message: "save success"
+            })
+
+        }
+        else {
+            return res.status(400).json({
+                message: "access denied"
+            })
+        }
+
+
+
+        
+    }catch(err) {
+        console.log(err)
+        return res.status(400).json({
+            message: "save error"
+        })
+    }
+
+
+}
 
 

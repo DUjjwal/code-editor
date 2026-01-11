@@ -173,7 +173,8 @@ export function AppSidebar() {
                 }
                 else {
                     await handleFile({name: fileName, parentId: data2.id, type, playgroundId: id!})
-                    await updateData({id})
+                    if(id)
+                        await updateData({id})
                     setOpen(false)
                 }
             }}>Create {type}</Button>
@@ -244,6 +245,7 @@ function Tree({ item }: { item: any}) {
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={async () =>  {
                         await handleDelete({item})
+                        if(id)
                         await updateData({id})
                     }}>
                         <Trash/>
@@ -265,6 +267,7 @@ function Tree({ item }: { item: any}) {
                     }
                     else {
                         await handleRename({item, newName})
+                        if(id)
                         await updateData({id})
                         setOpen(false)
                     }
@@ -323,6 +326,7 @@ function Tree({ item }: { item: any}) {
                         <DropdownMenuGroup>
                             <DropdownMenuItem onClick={async () =>  {
                                 await handleDelete({item})
+                                if(id)
                                 await updateData({id})
                             }}>
                                 <Trash/>
@@ -355,6 +359,7 @@ function Tree({ item }: { item: any}) {
                     }
                     else {
                         await handleRename({item, newName})
+                        if(id)
                         await updateData({id})
                         setOpen(false)
                     }
@@ -374,6 +379,7 @@ function Tree({ item }: { item: any}) {
                     }
                     else {
                         await handleFile({name: fileName, parentId: item.id, type, playgroundId: id!})
+                        if(id)
                         await updateData({id})
                         setOpen2(false)
                     }

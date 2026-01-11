@@ -2,12 +2,15 @@ import { act, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import type { editor } from "monaco-editor"
+import { error, success } from "@/lib/error";
 
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+
+import axios from "axios"
 
 import {
   Tooltip,
@@ -30,19 +33,76 @@ export function Playground() {
     const { id } = useParams<{ id: string}>()
     const navigate = useNavigate()
 
-    //@ts-ignore
     const updateData = useTree((state) => state.updateData)
 
-    //@ts-ignore
     const data = useTree((state) => state.data)
 
-    useEffect(() => {
-        const fn = async () => {
+    const initialiseFile = useEditor((state) => state.initialiseFile)
+
+    const setHeadersId = useEditor((state) => state.setHeadersId)
+    const setCount = useEditor((state) => state.setCount)
+    const openFile = useEditor((state) => state.openFile)
+    
+    const fn = async () => {
+        if(id) {
             const res = await updateData({id})
             if(!res) {
                 navigate("/dashboard")
             }
+
         }
+        
+
+        const playId = localStorage.getItem("playId")
+        
+        if(playId === JSON.stringify(id)) {
+            
+            let headersId = localStorage.getItem("headersId")
+            if(headersId) {
+                headersId = JSON.parse(headersId)
+                
+                console.log(headersId)
+                if(Array.isArray(headersId)) {
+                
+                    const {filesMap, namesMap} = useTree.getState()
+                    
+                    headersId.forEach((item) => {
+                        //i have the file id now i want to set headers, activeId, count, openFiles
+                        
+                        console.log("hi")
+                        console.log(item,namesMap[item], filesMap[item])
+                        initialiseFile(item, namesMap[item], filesMap[item])
+    
+    
+                    })
+    
+                    setCount(headersId.length)
+    
+                    setHeadersId(headersId)
+    
+                    if(localStorage.getItem("activeId") !== null) {
+                        const file = Number(localStorage.getItem("activeId"))
+                        openFile(file, filesMap[file], namesMap[file])
+                    }
+                    
+                }
+            }
+            
+        }
+        else {
+            console.log("hua")
+            localStorage.removeItem("activeId")
+            localStorage.removeItem("headersId")
+            localStorage.setItem("playId", JSON.stringify(id))
+        }
+
+
+
+
+    }
+
+    useEffect(() => {
+        
 
         // updateData({id})    
         fn()
@@ -69,6 +129,31 @@ function Header1() {
 
     const count = useEditor((state) => state.count)
 
+    const activeId = useEditor((state) => state.activeId)
+    const openFiles = useEditor((state) => state.openFiles)
+    const saveFile = useEditor((state) => state.saveFile)
+    
+    const handleSave = async () => {
+
+
+        try {
+            await axios.post("http://localhost:4000/playground/savefile", {
+                fileId: activeId,
+                content: openFiles[activeId].newContent
+            }, {withCredentials: true})
+
+
+            saveFile(activeId)
+
+            success("File Saved")
+            
+
+        }catch(err) {
+            console.log(err)
+            error("Error in saving file")
+        }
+    }
+
     return (
         <>
             <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 flex justify-between item-center">
@@ -83,7 +168,7 @@ function Header1() {
                 <div className="flex gap-x-1">
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button className="w-5" variant="outline">
+                            <Button className="w-5" variant="outline" onClick={handleSave}>
                                 <Save className="text-gray-700"/>
                             </Button>
                         </TooltipTrigger>
@@ -143,7 +228,7 @@ function Header2() {
 
     return (
         <>
-            <header className="flex h-10 shrink-0 items-center gap-2 px-4">
+            <header className="flex h-10 shrink-0 items-center gap-2 px-4 mt-1">
                 {headers.map((item, idx) => (
                     <Button variant="outline" className={`w-fit px-3 ${headersId[idx] === activeId ? "text-foreground" : "text-muted-foreground"} flex items-center gap-1`} onClick={() => setActive(headersId[idx])}>
                         {item}

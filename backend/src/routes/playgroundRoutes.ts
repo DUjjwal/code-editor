@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deletePlayground, duplicatePlayground, getAllPlayground, unmarkPlayground, markPlayground, editPlayground, createPlaygroundLatest, getPlaygroundFiles, renameFile, deleteFile, createFile } from "../controller/playgroundController.js";
+import { deletePlayground, duplicatePlayground, getAllPlayground, unmarkPlayground, markPlayground, editPlayground, createPlaygroundLatest, getPlaygroundFiles, renameFile, deleteFile, createFile, saveFile } from "../controller/playgroundController.js";
 import { authMiddleware } from "../lib/middleware.js";
 
 const router = Router()
@@ -17,6 +17,7 @@ router.route("/files").post(authMiddleware, getPlaygroundFiles)
 router.route("/rename").post(authMiddleware, renameFile)
 router.route("/deletefile").post(authMiddleware, deleteFile)
 router.route("/createfile").post(authMiddleware, createFile)
+router.route("/savefile").post(authMiddleware, saveFile)
 
 
 export default router

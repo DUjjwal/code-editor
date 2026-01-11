@@ -17,7 +17,11 @@ interface EditorState {
     openFile: (id: number, content: string, name: string) => void,
     removeFile: (id: number) => void,
     setActive: (id: number) => void,
-    setContent: (value: string) => void
+    setContent: (value: string) => void,
+    saveFile: (id: number) => void,
+    initialiseFile: (id: number, name: string, content: string) => void,
+    setCount: (count: number) => void,
+    setHeadersId: (arr: number[]) => void
 }
 
 export const useEditor = create<EditorState>((set,get) => ({
@@ -42,8 +46,16 @@ export const useEditor = create<EditorState>((set,get) => ({
             }, count: get().count + 1})
             set({headers: [...headers, name]})
             set({headersId: [...headersId, id]})
+
+            const temp = [...headersId, id]
+            localStorage.setItem("headersId", JSON.stringify(temp))
+        }
+        else {
+            localStorage.setItem("headersId", JSON.stringify(get().headersId))
         }
         set({activeId: id})
+
+        localStorage.setItem("activeId", JSON.stringify(id))
     },
     removeFile: (id: number) => {
         const openFiles = get().openFiles
@@ -62,13 +74,22 @@ export const useEditor = create<EditorState>((set,get) => ({
         
         const newHeadersId = headersId.filter(item => item !== id)
 
+        localStorage.setItem("headersId", JSON.stringify(newHeadersId))
+        
+
+
         set({headers: newHeaders, headersId: newHeadersId, count: get().count - 1})
 
-        if(get().activeId === id)
+        if(get().activeId === id) {
             set({activeId: -1})
+            localStorage.setItem("activeId", JSON.stringify(-1))
+        }
+        else
+            localStorage.setItem("activeId", JSON.stringify(id))
     },
     setActive: (id: number) => {
         set({activeId: id})
+        localStorage.setItem("activeId", JSON.stringify(id))
     },
     setContent: (value: string) => {
         const openFiles = get().openFiles
@@ -78,6 +99,38 @@ export const useEditor = create<EditorState>((set,get) => ({
 
         openFiles[get().activeId].hasUnsavedChanges = (value !== content) 
         set({openFiles})
+    },
+    saveFile: (id: number) => {
+        const openFiles = get().openFiles
+
+        openFiles[id].oldContent = openFiles[id].newContent
+
+        openFiles[id].hasUnsavedChanges = false
+        
+        set({openFiles})
+        
+
+    },
+    initialiseFile: (id: number, name: string, content: string) => {
+        const openFiles = get().openFiles
+
+        openFiles[id] = {
+            oldContent: content,
+            newContent: content,
+            name,
+            hasUnsavedChanges: false,
+            id
+        }
+        
+        set({headers: [...get().headers, name]})
+
+        set({openFiles})
+    },
+    setCount: (count: number) => {
+        set({count})
+    },
+    setHeadersId: (arr: number[]) => {
+        set({headersId: arr})
     }
 
 }))

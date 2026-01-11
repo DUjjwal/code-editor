@@ -12,8 +12,17 @@ export const useFile = create((set) => ({
     }
 }))
 
-export const useTree = create((set) => ({
+interface Tree {
+    data: any,
+    filesMap: Record<number, string>,
+    namesMap: Record<number, string>,
+    updateData: ({id} : {id: string}) => Promise<boolean>
+}
+
+export const useTree = create<Tree>((set) => ({
     data: {},
+    filesMap: {},
+    namesMap: {},
     updateData: async ({id}: {id: string}) => {
 
         try {
@@ -21,9 +30,10 @@ export const useTree = create((set) => ({
                 id: id
             }, {withCredentials: true})
     
-            // console.log(res2.data.data)
+            
             set({data: res2.data.data})
-
+            set({filesMap: res2.data.filesMap})
+            set({namesMap: res2.data.namesMap})
             return true
 
         }catch(err) {
