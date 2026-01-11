@@ -74,18 +74,20 @@ export const useEditor = create<EditorState>((set,get) => ({
         
         const newHeadersId = headersId.filter(item => item !== id)
 
-        localStorage.setItem("headersId", JSON.stringify(newHeadersId))
-        
+        if(newHeadersId[0] !== -1)
+            localStorage.setItem("headersId", JSON.stringify(newHeadersId))
+        else
+            localStorage.removeItem("headersId")
 
 
         set({headers: newHeaders, headersId: newHeadersId, count: get().count - 1})
 
         if(get().activeId === id) {
             set({activeId: -1})
-            localStorage.setItem("activeId", JSON.stringify(-1))
+            localStorage.removeItem("activeId")
         }
         else
-            localStorage.setItem("activeId", JSON.stringify(id))
+            localStorage.setItem("activeId", JSON.stringify(get().activeId))
     },
     setActive: (id: number) => {
         set({activeId: id})

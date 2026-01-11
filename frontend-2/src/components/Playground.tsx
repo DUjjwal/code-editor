@@ -154,6 +154,35 @@ function Header1() {
         }
     }
 
+    const handleSaveAll = async () => {
+
+
+        try {
+
+            const {headersId} = useEditor.getState()
+
+            headersId.forEach(async (item) => {
+               
+                await axios.post("http://localhost:4000/playground/savefile", {
+                    fileId: item,
+                    content: openFiles[item].newContent
+                }, {withCredentials: true})
+               
+                saveFile(item)
+            })
+            
+
+
+
+            success("All File's Saved")
+            
+
+        }catch(err) {
+            console.log(err)
+            error("Error in saving file")
+        }
+    }
+
     return (
         <>
             <header className="h-14 shrink-0 items-center gap-2 border-b px-4 flex justify-between item-center">
@@ -178,7 +207,7 @@ function Header1() {
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button className="w-5" variant="outline">
+                            <Button className="w-5" variant="outline" onClick={handleSaveAll}>
                                 <SaveAll className="text-gray-700"/>
                             </Button>
                         </TooltipTrigger>
