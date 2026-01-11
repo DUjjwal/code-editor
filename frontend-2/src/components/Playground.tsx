@@ -1,4 +1,4 @@
-import { act, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import type { editor } from "monaco-editor"
@@ -156,7 +156,7 @@ function Header1() {
 
     return (
         <>
-            <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 flex justify-between item-center">
+            <header className="h-14 shrink-0 items-center gap-2 border-b px-4 flex justify-between item-center">
                 <div className="flex items-center gap-x-2">
                     <SidebarTrigger className="-ml-1" />
                     <div>
@@ -246,90 +246,6 @@ function Header2() {
 }
 
 
-const monacoLanguageMap: Record<string, string> = {
-  // ===============================
-  // JavaScript / TypeScript
-  // ===============================
-  js: "javascript",
-  mjs: "javascript",
-  cjs: "javascript",
-  jsx: "javascript",
-  ts: "typescript",
-  mts: "typescript",
-  cts: "typescript",
-  tsx: "typescript",
-
-  // ===============================
-  // Vue / Svelte
-  // ===============================
-  vue: "vue",
-  svelte: "svelte",
-
-  // ===============================
-  // Web
-  // ===============================
-  html: "html",
-  htm: "html",
-  css: "css",
-  scss: "scss",
-  sass: "scss",
-  less: "less",
-
-  // ===============================
-  // Data / Config
-  // ===============================
-  json: "json",
-  jsonc: "json",
-  yaml: "yaml",
-  yml: "yaml",
-  toml: "toml",
-  ini: "ini",
-  conf: "ini",
-
-  // ===============================
-  // Backend
-  // ===============================
-  graphql: "graphql",
-  gql: "graphql",
-  sql: "sql",
-
-  // ===============================
-  // Docs
-  // ===============================
-  md: "markdown",
-  markdown: "markdown",
-  txt: "plaintext",
-
-  // ===============================
-  // Shell / Scripts
-  // ===============================
-  sh: "shell",
-  bash: "shell",
-  zsh: "shell",
-
-  // ===============================
-  // DevOps
-  // ===============================
-  dockerfile: "dockerfile",
-  dockerignore: "plaintext",
-
-  // ===============================
-  // Git
-  // ===============================
-  gitignore: "plaintext",
-  gitattributes: "plaintext",
-  gitmodules: "plaintext",
-
-  // ===============================
-  // Low level
-  // ===============================
-  wasm: "wat",
-
-  // ===============================
-  // Misc
-  // ===============================
-  log: "plaintext",
-};
 
 
 
