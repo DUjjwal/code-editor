@@ -295,16 +295,12 @@ function Body() {
 }
 
     const name = openFiles[activeId].name
-    let ext = name.split(".").at(-1)
-
-    if(!ext) ext = "js"
-    const lang = monacoLanguageMap[ext]
-
+    
     return (
         <div className="h-screen">
             <Editor
                 height="90vh"
-                defaultLanguage={lang}
+                path={name}
                 value={data}
                 theme="github-light"
                 options={options}
