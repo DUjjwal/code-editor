@@ -16,7 +16,8 @@ interface EditorState {
     openFiles: Record<number, State>,
     openFile: (id: number, content: string, name: string) => void,
     removeFile: (id: number) => void,
-    setActive: (id: number) => void
+    setActive: (id: number) => void,
+    setContent: (value: string) => void
 }
 
 export const useEditor = create<EditorState>((set,get) => ({
@@ -68,5 +69,15 @@ export const useEditor = create<EditorState>((set,get) => ({
     },
     setActive: (id: number) => {
         set({activeId: id})
+    },
+    setContent: (value: string) => {
+        const openFiles = get().openFiles
+
+        const content = openFiles[get().activeId].newContent
+        openFiles[get().activeId].newContent = value
+
+        openFiles[get().activeId].hasUnsavedChanges = (value !== content) 
+        set({openFiles})
     }
+
 }))

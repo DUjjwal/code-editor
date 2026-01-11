@@ -1,6 +1,8 @@
 import { act, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import type { editor } from "monaco-editor"
+
 import {
   SidebarInset,
   SidebarProvider,
@@ -12,6 +14,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+
+import Editor from '@monaco-editor/react';
 
 import { AppSidebar } from "./AppSidebar";
 import { useTree } from "@/store/fileStore";
@@ -156,16 +160,156 @@ function Header2() {
     )
 }
 
+
+const monacoLanguageMap: Record<string, string> = {
+  // ===============================
+  // JavaScript / TypeScript
+  // ===============================
+  js: "javascript",
+  mjs: "javascript",
+  cjs: "javascript",
+  jsx: "javascript",
+  ts: "typescript",
+  mts: "typescript",
+  cts: "typescript",
+  tsx: "typescript",
+
+  // ===============================
+  // Vue / Svelte
+  // ===============================
+  vue: "vue",
+  svelte: "svelte",
+
+  // ===============================
+  // Web
+  // ===============================
+  html: "html",
+  htm: "html",
+  css: "css",
+  scss: "scss",
+  sass: "scss",
+  less: "less",
+
+  // ===============================
+  // Data / Config
+  // ===============================
+  json: "json",
+  jsonc: "json",
+  yaml: "yaml",
+  yml: "yaml",
+  toml: "toml",
+  ini: "ini",
+  conf: "ini",
+
+  // ===============================
+  // Backend
+  // ===============================
+  graphql: "graphql",
+  gql: "graphql",
+  sql: "sql",
+
+  // ===============================
+  // Docs
+  // ===============================
+  md: "markdown",
+  markdown: "markdown",
+  txt: "plaintext",
+
+  // ===============================
+  // Shell / Scripts
+  // ===============================
+  sh: "shell",
+  bash: "shell",
+  zsh: "shell",
+
+  // ===============================
+  // DevOps
+  // ===============================
+  dockerfile: "dockerfile",
+  dockerignore: "plaintext",
+
+  // ===============================
+  // Git
+  // ===============================
+  gitignore: "plaintext",
+  gitattributes: "plaintext",
+  gitmodules: "plaintext",
+
+  // ===============================
+  // Low level
+  // ===============================
+  wasm: "wat",
+
+  // ===============================
+  // Misc
+  // ===============================
+  log: "plaintext",
+};
+
+
+
 function Body() {
 
     const activeId = useEditor((state) => state.activeId)
     const openFiles = useEditor((state) => state.openFiles)
+    const setContent = useEditor((state) => state.setContent)
 
+    
 
     if(activeId === -1)
         return <div>No File Opened</div>
 
+    let data = openFiles[activeId].newContent
+
+    const options: editor.IStandaloneEditorConstructionOptions = {
+  fontSize: 14,
+  fontFamily: "'Droid Sans Mono', monospace",
+
+  minimap: { enabled: true },
+
+  lineNumbers: "on",        // ✅ now this is "on" | "off" | "relative"
+  wordWrap: "off",         // ✅ union type
+  renderWhitespace: "selection",
+  renderLineHighlight: "line",
+
+  scrollBeyondLastLine: true,
+  automaticLayout: true,
+
+  bracketPairColorization: {
+    enabled: true,
+  },
+
+  inlineSuggest: {
+    enabled: true,
+  },
+
+  quickSuggestions: {
+    other: true,
+    comments: false,
+    strings: false,
+  },
+
+  parameterHints: {
+    enabled: true,
+  },
+}
+
+    const name = openFiles[activeId].name
+    let ext = name.split(".").at(-1)
+
+    if(!ext) ext = "js"
+    const lang = monacoLanguageMap[ext]
+
     return (
-        <div className="h-screen border border-red-400">{openFiles[activeId].newContent}</div>
+        <div className="h-screen">
+            <Editor
+                height="90vh"
+                defaultLanguage={lang}
+                value={data}
+                theme="github-light"
+                options={options}
+                onChange={(value) => setContent(value!)}
+            />
+        </div>
     )
 }
