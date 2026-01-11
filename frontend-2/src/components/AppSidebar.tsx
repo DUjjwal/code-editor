@@ -46,6 +46,7 @@ import { useState } from "react"
 
 import { Button } from "./ui/button"
 import { useParams } from "react-router-dom"
+import { useEditor } from "@/store/codeEditor"
 
 const handleRename = async ({item, newName}: {item: any, newName: string}) => {
     try {
@@ -97,6 +98,7 @@ const handleFile = async ({name, parentId, type, playgroundId}: {name: string, p
 
 
 }
+
 
 
 export function AppSidebar() {
@@ -199,6 +201,7 @@ function Tree({ item }: { item: any}) {
 
     //@ts-ignore
     const updateData = useTree((state) => state.updateData)
+    const openFile = useEditor((state) => state.openFile)
 
 
     const [open2, setOpen2] = useState<boolean>(false)
@@ -211,7 +214,11 @@ function Tree({ item }: { item: any}) {
       <SidebarMenuButton
         className="data-[active=true]:bg-transparent flex justify-between items-center"
         isActive={name === (item.name)}
-        onClick={() => setActive({name: item.name, content: item.content, id: item.id})}
+        onClick={() => {
+            setActive({name: item.name, content: item.content, id: item.id})
+
+            openFile(item.id, item.name, item.content)
+        }}
       >
         <div className="flex gap-x-2">
                 <File className="w-4 h-4"/>
