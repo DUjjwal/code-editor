@@ -56,17 +56,21 @@ export function Playground() {
         const playId = localStorage.getItem("playId")
         
         if(playId === JSON.stringify(id)) {
-            
+            let temp = []
             let headersId = localStorage.getItem("headersId")
             if(headersId) {
                 headersId = JSON.parse(headersId)
                 
                 console.log(headersId)
-                if(Array.isArray(headersId)) {
+                if(Array.isArray(headersId) && headersId.length > 0) {
                 
-                    const {filesMap, namesMap} = useTree.getState()
+                    let {filesMap, namesMap} = useTree.getState()
                     
-                    headersId.forEach((item) => {
+                    temp = headersId.filter(item => item in filesMap && item in namesMap)
+
+                    // console.log(temp)
+
+                    temp.forEach((item) => {
                         //i have the file id now i want to set headers, activeId, count, openFiles
                         
                         console.log("hi")
@@ -76,9 +80,9 @@ export function Playground() {
     
                     })
     
-                    setCount(headersId.length)
+                    setCount(temp.length)
     
-                    setHeadersId(headersId)
+                    setHeadersId(temp)
     
                     if(localStorage.getItem("activeId") !== null) {
                         const file = Number(localStorage.getItem("activeId"))
@@ -86,6 +90,17 @@ export function Playground() {
                     }
                     
                 }
+                else {
+                    localStorage.removeItem("headersId")
+                    localStorage.removeItem("activeId")
+                }
+            }
+
+            if(temp.length)
+                localStorage.setItem("headersId", JSON.stringify(temp))
+            else {
+                localStorage.removeItem("headersId")
+                localStorage.removeItem("activeId")
             }
             
         }

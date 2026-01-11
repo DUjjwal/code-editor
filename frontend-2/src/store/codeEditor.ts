@@ -58,9 +58,11 @@ export const useEditor = create<EditorState>((set,get) => ({
         localStorage.setItem("activeId", JSON.stringify(id))
     },
     removeFile: (id: number) => {
+        console.log("id-", id)
         const openFiles = get().openFiles
 
-        delete openFiles[id]
+        if(id in openFiles)
+            delete openFiles[id]
 
         set({openFiles})
 
@@ -78,7 +80,8 @@ export const useEditor = create<EditorState>((set,get) => ({
             localStorage.setItem("headersId", JSON.stringify(newHeadersId))
         else
             localStorage.removeItem("headersId")
-
+        
+        console.log(newHeadersId, headersId)
 
         set({headers: newHeaders, headersId: newHeadersId, count: get().count - 1})
 

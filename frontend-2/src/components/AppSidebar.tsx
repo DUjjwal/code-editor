@@ -72,6 +72,10 @@ const handleDelete = async ({item}: {item: any}) => {
             fileId
         }, {withCredentials: true})
 
+        const {removeFile} = useEditor.getState()
+
+        removeFile(item.id)
+
         
 
     }catch(err) {
