@@ -23,7 +23,7 @@ import Editor from '@monaco-editor/react';
 import { AppSidebar } from "./AppSidebar";
 import { useTree } from "@/store/fileStore";
 import { useEditor } from "@/store/codeEditor";
-import { BotIcon, X, Save, SaveAll, Settings } from "lucide-react";
+import { BotIcon, X, Save, SaveAll, Settings, FileText } from "lucide-react";
 import { Button } from "./ui/button";
 
 
@@ -287,7 +287,14 @@ function Body() {
     
 
     if(activeId === -1)
-        return <div>No File Opened</div>
+        return <div className="w-full h-[70%] flex justify-center items-center flex-col gap-y-2">
+            <FileText className="w-20 h-20 text-gray-700"/>
+            <div className="text-center"> 
+                <p>No Files open</p>
+                <p className="text-muted-foreground">Select a file from the sidebar to start editing</p> 
+
+            </div>
+        </div>
 
     let data = openFiles[activeId].newContent
 
