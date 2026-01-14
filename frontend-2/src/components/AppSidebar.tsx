@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import { useFile, useTree } from "@/store/fileStore"
-import { FilePlus, FolderPlus, PencilLine, Trash,Ellipsis, EllipsisVertical, Plus } from "lucide-react"
+import { FilePlus, FolderPlus, PencilLine, Trash,Ellipsis, EllipsisVertical, Plus, FileBraces, FolderClosed } from "lucide-react"
 
 import axios from "axios"
 
@@ -226,7 +226,7 @@ function Tree({ item }: { item: any}) {
         }}
       >
         <div className="flex gap-x-2">
-                <File className="w-4 h-4"/>
+                <FileBraces className="w-4 h-4"/>
                 {item.name}
       
 
@@ -294,7 +294,7 @@ function Tree({ item }: { item: any}) {
             <SidebarMenuButton className="flex justify-between items-center">
                 {/* <ChevronRight className="transition-transform" /> */}
                 <div className="flex gap-x-2">
-                    <Folder className="w-4 h-4"/>
+                    <FolderClosed className="w-4 h-4"/>
                     {item.name}
 
                 </div>
