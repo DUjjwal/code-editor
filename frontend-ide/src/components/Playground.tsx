@@ -5,6 +5,12 @@ import {error, success} from "@/lib/error"
 import {useEditor} from "@/store/codeEditor"
 
 import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable"
+
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -173,10 +179,10 @@ export function Playground() {
 
     return (
         <>
-        <div className="w-[100%]">
+        <div>
             <SidebarProvider>
             <AppSidebar/>
-            <SidebarInset className="w-[100%]">
+            <SidebarInset>
                 <Header1/>
                 <Header2/>
                 <Body/>
@@ -397,8 +403,9 @@ function Body() {
     const name = openFiles[activeId].name
     
     return (
-        <div className="h-[86%] w-[100%] flex">
-            <div className="w-[50%]">
+    <>
+        <ResizablePanelGroup direction="horizontal" className="h-[86%] w-[100%]">
+            <ResizablePanel>
                 <Editor
                     height="90vh"
                     path={name}
@@ -408,11 +415,16 @@ function Body() {
                     onChange={(value) => setContent(value!)}
                 />
 
-            </div>
-            <div className="h-full w-[50%] bg-red-300">
+            </ResizablePanel>
+            <ResizableHandle/>
+            <ResizablePanel>
                 <Terminal/>
-                {/* hi */}
-            </div>
-        </div>
+                
+            </ResizablePanel>
+        
+        </ResizablePanelGroup>
+        
+    
+    </>
     )
 }

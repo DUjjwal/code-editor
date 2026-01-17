@@ -5,6 +5,12 @@ import { Terminal as XTerminal } from "xterm"
 import { FitAddon } from "@xterm/addon-fit"
 import "xterm/css/xterm.css"
 
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable"
+
 export function Terminal() {
   const webContainer = useRef<WebContainer | null>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
@@ -82,16 +88,29 @@ export function Terminal() {
 
   return (
     <>
-      <iframe
-        ref={iframeRef}
-        className="w-full h-[50%] border-none"
-        sandbox="allow-scripts allow-same-origin allow-forms"
-        allow="cross-origin-isolated"
-      />
-      <div
-        ref={terminalRef}
-        className="w-[100%] h-[50%]"
-      />
+
+    <ResizablePanelGroup direction="vertical" className="h-[86%] w-[100%]">
+        <ResizablePanel>
+            <iframe
+              ref={iframeRef}
+              className="w-full h-[100%] border-none"
+              sandbox="allow-scripts allow-same-origin allow-forms"
+              allow="cross-origin-isolated"
+            />
+
+        </ResizablePanel>
+        <ResizableHandle/>
+        <ResizablePanel>
+            <div
+              ref={terminalRef}
+              className="w-[100%] h-[100%]"
+            />
+            
+        </ResizablePanel>
+        
+    </ResizablePanelGroup>
+      
+      
     </>
 
   )
