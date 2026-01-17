@@ -1,4 +1,3 @@
-import { File, Folder } from "lucide-react"
 
 import {
   Collapsible,

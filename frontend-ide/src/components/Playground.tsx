@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useParams, useSearchParams } from "react-router-dom"
 import axios from "axios"
 import {error, success} from "@/lib/error"
@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/sidebar"
 
 import { useTree } from "@/store/fileStore"
-import { useNavigate } from "react-router-dom"
 import { BotIcon, X, Save, SaveAll, Settings, FileText } from "lucide-react";
 
 import { Button } from "./ui/button"
@@ -95,53 +94,7 @@ export function Playground() {
                 localStorage.removeItem("headersId")
                 localStorage.removeItem("activeId")
             }
-            // let temp = []
-            // let headersId = localStorage.getItem("headersId")
-            // if(headersId) {
-            //     headersId = JSON.parse(headersId)
-                
-            //     console.log(headersId)
-            //     if(Array.isArray(headersId) && headersId.length > 0) {
-                
-            //         let {filesMap, namesMap} = useTree.getState()
-                    
-            //         temp = headersId.filter(item => item in filesMap && item in namesMap)
-
-            //         // console.log(temp)
-
-            //         temp.forEach((item) => {
-            //             //i have the file id now i want to set headers, activeId, count, openFiles
-                        
-            //             console.log("hi")
-            //             console.log(item,namesMap[item], filesMap[item])
-            //             initialiseFile(item, namesMap[item], filesMap[item])
-    
-    
-            //         })
-    
-            //         setCount(temp.length)
-    
-            //         setHeadersId(temp)
-    
-            //         if(localStorage.getItem("activeId") !== null) {
-            //             const file = Number(localStorage.getItem("activeId"))
-            //             openFile(file, filesMap[file], namesMap[file])
-            //         }
-                    
-            //     }
-            //     else {
-            //         localStorage.removeItem("headersId")
-            //         localStorage.removeItem("activeId")
-            //     }
-            // }
-
-            // if(temp.length)
-            //     localStorage.setItem("headersId", JSON.stringify(temp))
-            // else {
-            //     localStorage.removeItem("headersId")
-            //     localStorage.removeItem("activeId")
-            // }
-            
+                       
         }
         else {
             localStorage.removeItem("activeId")
@@ -188,7 +141,7 @@ export function Playground() {
                         
                     }
                     else {
-                        const status = await axios.get("http://localhost:4000/status", {
+                        await axios.get("http://localhost:4000/status", {
                             headers: {
                                 'Authorization': `Bearer ${access}`,
                             }
