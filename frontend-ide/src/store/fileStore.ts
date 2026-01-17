@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "axios"
 import { error } from "@/lib/error";
 
+import { buildWebContainerFiles } from "@/lib/webconatinerfiles";
 
 export const useFile = create((set) => ({
     name: "",
@@ -16,6 +17,7 @@ interface Tree {
     data: any,
     filesMap: Record<number, string>,
     namesMap: Record<number, string>,
+    webContainerFiles: any,
     updateData: ({id} : {id: string}) => Promise<boolean>
 }
 
@@ -23,6 +25,7 @@ export const useTree = create<Tree>((set) => ({
     data: {},
     filesMap: {},
     namesMap: {},
+    webContainerFiles: {},
     updateData: async ({id}: {id: string}) => {
 
         try {
@@ -34,6 +37,7 @@ export const useTree = create<Tree>((set) => ({
             set({data: res2.data.data})
             set({filesMap: res2.data.filesMap})
             set({namesMap: res2.data.namesMap})
+            set({webContainerFiles: buildWebContainerFiles(res2.data.data)})
             return true
 
         }catch(err) {

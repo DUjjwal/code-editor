@@ -25,6 +25,7 @@ import { useTree } from "@/store/fileStore"
 import { BotIcon, X, Save, SaveAll, Settings, FileText } from "lucide-react";
 
 import { Button } from "./ui/button"
+import { Terminal } from "./Terminal"
 
 export function Playground() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -37,6 +38,8 @@ export function Playground() {
     const updateData = useTree((state) => state.updateData)
 
     const data = useTree((state) => state.data)
+
+
     
     const initialiseFile = useEditor((state) => state.initialiseFile)
 
@@ -170,14 +173,17 @@ export function Playground() {
 
     return (
         <>
-        <SidebarProvider>
-        <AppSidebar/>
-        <SidebarInset>
-            <Header1/>
-            <Header2/>
-            <Body/>
-        </SidebarInset>
-        </SidebarProvider>
+        <div className="w-[100%]">
+            <SidebarProvider>
+            <AppSidebar/>
+            <SidebarInset className="w-[100%]">
+                <Header1/>
+                <Header2/>
+                <Body/>
+            </SidebarInset>
+            </SidebarProvider>
+
+        </div>
         </>
     )
 }
@@ -246,7 +252,7 @@ function Header1() {
 
     return (
         <>
-            <header className="h-14 shrink-0 items-center gap-2 border-b px-4 flex justify-between item-center">
+            <header className="h-[7%] shrink-0 items-center gap-2 border-b px-4 flex justify-between item-center">
                 <div className="flex items-center gap-x-2">
                     <SidebarTrigger className="-ml-1" />
                     <div>
@@ -318,9 +324,9 @@ function Header2() {
 
     return (
         <>
-            <header className="flex h-10 shrink-0 items-center gap-2 px-4 mt-1">
+            <header className="flex h-[5%] shrink-0 items-center gap-2 px-4 mt-1">
                 {headers.map((item, idx) => (
-                    <Button variant="outline" className={`w-fit px-3 ${headersId[idx] === activeId ? "text-foreground" : "text-muted-foreground"} flex items-center gap-1`} onClick={() => setActive(headersId[idx])}>
+                    <Button variant="outline" className={`w-fit px-3 ${headersId[idx] === activeId ? "text-foreground" : "text-muted-foreground"} flex items-center gap-1`} onClick={() => setActive(headersId[idx])} key={idx}>
                         {item}
                     <span onClick={(e) => {
                         e.stopPropagation()
@@ -343,9 +349,8 @@ function Body() {
     const setContent = useEditor((state) => state.setContent)
 
     
-
     if(activeId === -1)
-        return <div className="w-full h-[70%] flex justify-center items-center flex-col gap-y-2">
+        return <div className="w-full h-[88%] flex justify-center items-center flex-col gap-y-2">
             <FileText className="w-20 h-20 text-gray-700"/>
             <div className="text-center"> 
                 <p>No Files open</p>
@@ -392,8 +397,8 @@ function Body() {
     const name = openFiles[activeId].name
     
     return (
-        <div className="h-screen">
-            <div className="w-[70%]">
+        <div className="h-[88%] w-[100%] flex">
+            <div className="w-[50%]">
                 <Editor
                     height="90vh"
                     path={name}
@@ -404,8 +409,9 @@ function Body() {
                 />
 
             </div>
-            <div className="h-screen">
-                <iframe src="/editor.html" className="w-full h-full bg-red-500"></iframe>
+            <div className="h-200 w-[50%] bg-red-300">
+                <Terminal/>
+                {/* hi */}
             </div>
         </div>
     )
