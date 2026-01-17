@@ -34,12 +34,11 @@ export function Playground() {
 
     const { id } = useParams()
 
-    const navigate = useNavigate()
-
+    
     const updateData = useTree((state) => state.updateData)
 
     const data = useTree((state) => state.data)
-
+    
     const initialiseFile = useEditor((state) => state.initialiseFile)
 
     const setHeadersId = useEditor((state) => state.setHeadersId)
@@ -59,56 +58,92 @@ export function Playground() {
         const playId = localStorage.getItem("playId")
         
         if(playId === JSON.stringify(id)) {
-            let temp = []
+
             let headersId = localStorage.getItem("headersId")
             if(headersId) {
-                headersId = JSON.parse(headersId)
+                let arr: number[] = Array.from(JSON.parse(headersId))
                 
-                console.log(headersId)
-                if(Array.isArray(headersId) && headersId.length > 0) {
+                let {filesMap, namesMap} = useTree.getState()
+
+                arr = arr.filter((item: any) => item in filesMap && item in namesMap)
                 
-                    let {filesMap, namesMap} = useTree.getState()
-                    
-                    temp = headersId.filter(item => item in filesMap && item in namesMap)
+                console.log(arr, filesMap, namesMap)
 
-                    // console.log(temp)
+                arr.forEach((item: any) => {
+                    initialiseFile(item, namesMap[item], filesMap[item])
+                })
 
-                    temp.forEach((item) => {
-                        //i have the file id now i want to set headers, activeId, count, openFiles
-                        
-                        console.log("hi")
-                        console.log(item,namesMap[item], filesMap[item])
-                        initialiseFile(item, namesMap[item], filesMap[item])
-    
-    
-                    })
-    
-                    setCount(temp.length)
-    
-                    setHeadersId(temp)
-    
-                    if(localStorage.getItem("activeId") !== null) {
-                        const file = Number(localStorage.getItem("activeId"))
-                        openFile(file, filesMap[file], namesMap[file])
-                    }
-                    
+                setCount(arr.length)
+
+                setHeadersId(arr)
+
+                if(localStorage.getItem("activeId") !== null) {
+                    const file = Number(localStorage.getItem("activeId"))
+                    openFile(file, filesMap[file], namesMap[file])
+                }
+
+                if(arr.length) {
+                    localStorage.setItem("headersId", JSON.stringify(arr))
                 }
                 else {
                     localStorage.removeItem("headersId")
                     localStorage.removeItem("activeId")
                 }
-            }
 
-            if(temp.length)
-                localStorage.setItem("headersId", JSON.stringify(temp))
+            }
             else {
                 localStorage.removeItem("headersId")
                 localStorage.removeItem("activeId")
             }
+            // let temp = []
+            // let headersId = localStorage.getItem("headersId")
+            // if(headersId) {
+            //     headersId = JSON.parse(headersId)
+                
+            //     console.log(headersId)
+            //     if(Array.isArray(headersId) && headersId.length > 0) {
+                
+            //         let {filesMap, namesMap} = useTree.getState()
+                    
+            //         temp = headersId.filter(item => item in filesMap && item in namesMap)
+
+            //         // console.log(temp)
+
+            //         temp.forEach((item) => {
+            //             //i have the file id now i want to set headers, activeId, count, openFiles
+                        
+            //             console.log("hi")
+            //             console.log(item,namesMap[item], filesMap[item])
+            //             initialiseFile(item, namesMap[item], filesMap[item])
+    
+    
+            //         })
+    
+            //         setCount(temp.length)
+    
+            //         setHeadersId(temp)
+    
+            //         if(localStorage.getItem("activeId") !== null) {
+            //             const file = Number(localStorage.getItem("activeId"))
+            //             openFile(file, filesMap[file], namesMap[file])
+            //         }
+                    
+            //     }
+            //     else {
+            //         localStorage.removeItem("headersId")
+            //         localStorage.removeItem("activeId")
+            //     }
+            // }
+
+            // if(temp.length)
+            //     localStorage.setItem("headersId", JSON.stringify(temp))
+            // else {
+            //     localStorage.removeItem("headersId")
+            //     localStorage.removeItem("activeId")
+            // }
             
         }
         else {
-            console.log("hua")
             localStorage.removeItem("activeId")
             localStorage.removeItem("headersId")
             localStorage.setItem("playId", JSON.stringify(id))
