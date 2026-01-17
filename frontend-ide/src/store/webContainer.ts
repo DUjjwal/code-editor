@@ -69,10 +69,11 @@ export const useWebContainer = create<web>((set, get) => ({
         if(!webContainer || !terminal)return 
 
         terminal.writeln(` File Save detected\n`)
+        terminal.writeln(` Rewriting File...`)
 
         await webContainer.fs.writeFile(path, content)
 
-        terminal.writeln(` Rewriting File...`)
+        terminal.writeln(` Rewriting File Completed`)
 
 
     },
