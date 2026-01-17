@@ -16,15 +16,35 @@ export function Terminal() {
   const terminalRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const webcontainerfiles = useTree((state) => state.webContainerFiles)
+  const data = useTree((state) => state.data)
+
+  let terminal: any = null
+
+  const bootContainer = async () => {
+      webContainer.current = await WebContainer.boot()
+      
+  }
+
+  const mountFiles = async () => {
+    terminal.writeln("Mounting filesystem...\r\n")
+    
+    if(!webContainer.current)bootContainer()
+    
+    await webContainer.current?.mount(webcontainerfiles.directory)
+
+    terminal.writeln("Files mounted")
+    terminal.writeln("Running npm install...\r\n")
+
+  }
 
   useEffect(() => {
     
     const fn = async () => {
       if (!webContainer.current) {
-        webContainer.current = await WebContainer.boot()
+        await bootContainer()
       }
 
-      const terminal = new XTerminal({
+      terminal = new XTerminal({
         convertEol: true,
         cursorBlink: true,
         fontSize: 14,
@@ -47,14 +67,9 @@ export function Terminal() {
 
       resizeObserver.observe(terminalRef.current!)
 
+      mountFiles()
 
-      terminal.writeln("Mounting filesystem...\r\n")
-
-      await webContainer.current.mount(webcontainerfiles.directory)
-
-      terminal.writeln("Files mounted")
-      terminal.writeln("Running npm install...\r\n")
-
+      //@ts-ignore
       const shell = await webContainer.current.spawn("jsh")
 
       shell.output.pipeTo(
@@ -67,10 +82,11 @@ export function Terminal() {
 
       const writer = shell.input.getWriter()
 
-      terminal.onData((data) => {
+      terminal.onData((data: any) => {
         writer.write(data)
       })
 
+      //@ts-ignore
       webContainer.current.on("server-ready", (port, url) => {
         iframeRef.current!.src = url
       })
@@ -86,9 +102,12 @@ export function Terminal() {
     
   }, [])
 
+  useEffect(() => { 
+    console.log("changed")
+  }, [data])
+
   return (
     <>
-
     <ResizablePanelGroup direction="vertical" className="h-[86%] w-[100%]">
         <ResizablePanel>
             <iframe
