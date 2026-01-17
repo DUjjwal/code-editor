@@ -324,7 +324,7 @@ function Header2() {
 
     return (
         <>
-            <header className="flex h-[5%] shrink-0 items-center gap-2 px-4 mt-1">
+            <header className="flex h-[7%] shrink-0 items-center gap-2 px-4 mt-1">
                 {headers.map((item, idx) => (
                     <Button variant="outline" className={`w-fit px-3 ${headersId[idx] === activeId ? "text-foreground" : "text-muted-foreground"} flex items-center gap-1`} onClick={() => setActive(headersId[idx])} key={idx}>
                         {item}
@@ -350,7 +350,7 @@ function Body() {
 
     
     if(activeId === -1)
-        return <div className="w-full h-[88%] flex justify-center items-center flex-col gap-y-2">
+        return <div className="w-full h-[86%] flex justify-center items-center flex-col gap-y-2">
             <FileText className="w-20 h-20 text-gray-700"/>
             <div className="text-center"> 
                 <p>No Files open</p>
@@ -365,10 +365,10 @@ function Body() {
   fontSize: 14,
   fontFamily: "'Droid Sans Mono', monospace",
 
-  minimap: { enabled: true },
+  minimap: { enabled: false },
 
   lineNumbers: "on",        // ✅ now this is "on" | "off" | "relative"
-  wordWrap: "off",         // ✅ union type
+  wordWrap: "on",         // ✅ union type
   renderWhitespace: "selection",
   renderLineHighlight: "line",
 
@@ -397,7 +397,7 @@ function Body() {
     const name = openFiles[activeId].name
     
     return (
-        <div className="h-[88%] w-[100%] flex">
+        <div className="h-[86%] w-[100%] flex">
             <div className="w-[50%]">
                 <Editor
                     height="90vh"
@@ -409,7 +409,7 @@ function Body() {
                 />
 
             </div>
-            <div className="h-200 w-[50%] bg-red-300">
+            <div className="h-full w-[50%] bg-red-300">
                 <Terminal/>
                 {/* hi */}
             </div>

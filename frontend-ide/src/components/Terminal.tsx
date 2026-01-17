@@ -8,7 +8,7 @@ import "xterm/css/xterm.css"
 export function Terminal() {
   const webContainer = useRef<WebContainer | null>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
-
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   const webcontainerfiles = useTree((state) => state.webContainerFiles)
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export function Terminal() {
       })
 
       webContainer.current.on("server-ready", (port, url) => {
-        window.open(url, "_blank")
+        iframeRef.current!.src = url
       })
 
 
@@ -81,9 +81,18 @@ export function Terminal() {
   }, [])
 
   return (
-    <div
-      ref={terminalRef}
-      className="w-[100%]"
-    />
+    <>
+      <iframe
+        ref={iframeRef}
+        className="w-full h-[50%] border-none"
+        sandbox="allow-scripts allow-same-origin allow-forms"
+        allow="cross-origin-isolated"
+      />
+      <div
+        ref={terminalRef}
+        className="w-[100%] h-[50%]"
+      />
+    </>
+
   )
 }
