@@ -32,6 +32,7 @@ import { BotIcon, X, Save, SaveAll, Settings, FileText } from "lucide-react";
 
 import { Button } from "./ui/button"
 import { Terminal } from "./Terminal"
+import { useWebContainer } from "@/store/webContainer"
 
 export function Playground() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -202,6 +203,10 @@ function Header1() {
     const openFiles = useEditor((state) => state.openFiles)
     const saveFile = useEditor((state) => state.saveFile)
     
+    const pathMap = useTree((state) => state.pathMap)
+
+    const mountSeparateFile = useWebContainer((state) => state.mountSeparateFile)
+
     const handleSave = async () => {
 
 
@@ -215,6 +220,8 @@ function Header1() {
 
 
             saveFile(activeId)
+
+            await mountSeparateFile(pathMap[activeId], openFiles[activeId].newContent)
 
             success("File Saved")
             
@@ -242,6 +249,8 @@ function Header1() {
                 }})
                
                 saveFile(item)
+
+                await mountSeparateFile(pathMap[item], openFiles[item].newContent)
             })
             
 

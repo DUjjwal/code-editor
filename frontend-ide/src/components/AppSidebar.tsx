@@ -252,7 +252,9 @@ function Tree({ item }: { item: any}) {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator/>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={async () =>  {
+                    <DropdownMenuItem onClick={async (e) =>  {
+                        e.preventDefault()
+                        e.stopPropagation()
                         await handleDelete({item})
                         if(id)
                         await updateData({id})
@@ -333,7 +335,9 @@ function Tree({ item }: { item: any}) {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
-                            <DropdownMenuItem onClick={async () =>  {
+                            <DropdownMenuItem onClick={async (e) =>  {
+                                e.preventDefault()
+                                e.stopPropagation()
                                 await handleDelete({item})
                                 if(id)
                                 await updateData({id})

@@ -1,8 +1,5 @@
 import { useEffect, useRef } from "react"
-import { WebContainer } from "@webcontainer/api"
 import { useTree } from "@/store/fileStore"
-import { Terminal as XTerminal } from "xterm"
-import { FitAddon } from "@xterm/addon-fit"
 import "xterm/css/xterm.css"
 
 import {
@@ -10,100 +7,43 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
+import { useWebContainer } from "@/store/webContainer"
 
 export function Terminal() {
-  const webContainer = useRef<WebContainer | null>(null)
+  
   const terminalRef = useRef<HTMLDivElement>(null)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const url = useWebContainer((state) => state.url)
   const webcontainerfiles = useTree((state) => state.webContainerFiles)
   const data = useTree((state) => state.data)
 
-  let terminal: any = null
-
-  const bootContainer = async () => {
-      webContainer.current = await WebContainer.boot()
-      
-  }
-
-  const mountFiles = async () => {
-    terminal.writeln("Mounting filesystem...\r\n")
-    
-    if(!webContainer.current)bootContainer()
-    
-    await webContainer.current?.mount(webcontainerfiles.directory)
-
-    terminal.writeln("Files mounted")
-    terminal.writeln("Running npm install...\r\n")
-
-  }
+  const initialiseTerminal = useWebContainer((state) => state.initialiseTerminal)
+  const initialiseWebContainer = useWebContainer((state) => state.initialiseWebContainer)
+  const mountFiles = useWebContainer((state) => state.mountFiles)
+  const attachTerminal = useWebContainer((state) => state.attachTerminal)
+  const link = useWebContainer((state) => state.link)
 
   useEffect(() => {
     
     const fn = async () => {
-      if (!webContainer.current) {
-        await bootContainer()
-      }
-
-      terminal = new XTerminal({
-        convertEol: true,
-        cursorBlink: true,
-        fontSize: 14,
-        theme: {
-          background: "#1e1e1e",
-          foreground: "#ffffff"
-        }
-      })
-
-      const fitAddon = new FitAddon()
-      terminal.loadAddon(fitAddon)
       
-
-      terminal.open(terminalRef.current!)
-      fitAddon.fit()
-
-      const resizeObserver = new ResizeObserver(() => {
-        fitAddon.fit()
-      })
-
-      resizeObserver.observe(terminalRef.current!)
-
-      mountFiles()
-
-      //@ts-ignore
-      const shell = await webContainer.current.spawn("jsh")
-
-      shell.output.pipeTo(
-        new WritableStream({
-          write(data) {
-            terminal.write(data)
-          }
-        })
-      )
-
-      const writer = shell.input.getWriter()
-
-      terminal.onData((data: any) => {
-        writer.write(data)
-      })
-
-      //@ts-ignore
-      webContainer.current.on("server-ready", (port, url) => {
-        iframeRef.current!.src = url
-      })
+      await initialiseTerminal()
+      await initialiseWebContainer()
 
 
+      attachTerminal(terminalRef)
 
+      await mountFiles(webcontainerfiles)
 
-      
+      await link()
+     
     }
 
     fn()
-
-    
+   
   }, [])
 
   useEffect(() => { 
-    console.log("changed")
+    mountFiles(webcontainerfiles)
   }, [data])
 
   return (
@@ -111,7 +51,8 @@ export function Terminal() {
     <ResizablePanelGroup direction="vertical" className="h-[86%] w-[100%]">
         <ResizablePanel>
             <iframe
-              ref={iframeRef}
+              //@ts-ignore
+              src={url}
               className="w-full h-[100%] border-none"
               sandbox="allow-scripts allow-same-origin allow-forms"
               allow="cross-origin-isolated"

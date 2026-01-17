@@ -31,6 +31,7 @@ export const useEditor = create<EditorState>((set,get) => ({
     headers: [],
     headersId: [],
     openFile: (id: number, name: string, content: string) => {
+        console.log("open file called")
         const openFiles = get().openFiles
         const headers = get().headers
         const headersId = get().headersId
@@ -60,6 +61,9 @@ export const useEditor = create<EditorState>((set,get) => ({
     removeFile: (id: number) => {
         console.log("id-", id)
         const openFiles = get().openFiles
+        const activeId = get().activeId
+
+        console.log(activeId)
 
         if(id in openFiles)
             delete openFiles[id]
@@ -74,23 +78,25 @@ export const useEditor = create<EditorState>((set,get) => ({
             if(headersId[i] !== id)
                 newHeaders.push(headers[i])
         
-        const newHeadersId = headersId.filter(item => item !== id)
+        const newHeadersId = headersId.filter(item => item != id)
 
-        if(newHeadersId[0] !== -1)
+        if(newHeadersId[0] != -1)
             localStorage.setItem("headersId", JSON.stringify(newHeadersId))
         else
             localStorage.removeItem("headersId")
         
-        console.log(newHeadersId, headersId)
+        
 
         set({headers: newHeaders, headersId: newHeadersId, count: get().count - 1})
 
-        if(get().activeId === id) {
+        if(activeId == id) {
             set({activeId: -1})
             localStorage.removeItem("activeId")
         }
         else
-            localStorage.setItem("activeId", JSON.stringify(get().activeId))
+            localStorage.setItem("activeId", JSON.stringify(activeId))
+
+        
     },
     setActive: (id: number) => {
         set({activeId: id})

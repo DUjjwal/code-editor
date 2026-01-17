@@ -11,6 +11,45 @@ type Node = {
   items?: Node[]
 }
 
+
+
+/**
+ * Output:
+ * {
+ *   219: "public/index.html",
+ *   218: "package.json"
+ * }
+ */
+export function buildWebContainerIdPathMapWithoutRoot(tree: Node) {
+  const idPathMap: Record<number, string> = {}
+
+  function dfs(
+    node: Node,
+    currentPath: string,
+    isRoot: boolean
+  ) {
+    // skip root folder name
+    const path = isRoot
+      ? ""
+      : currentPath
+        ? `${currentPath}/${node.name}`
+        : node.name
+
+    if (!isRoot) {
+      idPathMap[node.id] = path
+    }
+
+    node.items?.forEach(child =>
+      dfs(child, path, false)
+    )
+  }
+
+  dfs(tree, "", true)
+
+  return idPathMap
+}
+
+
 type WebContainerFS = {
   [name: string]: {
     file?: {
