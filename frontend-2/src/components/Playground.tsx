@@ -350,14 +350,20 @@ function Body() {
     
     return (
         <div className="h-screen">
-            <Editor
-                height="90vh"
-                path={name}
-                value={data}
-                theme="github-light"
-                options={options}
-                onChange={(value) => setContent(value!)}
-            />
+            <div className="w-[70%]">
+                <Editor
+                    height="90vh"
+                    path={name}
+                    value={data}
+                    theme="github-light"
+                    options={options}
+                    onChange={(value) => setContent(value!)}
+                />
+
+            </div>
+            <div className="h-screen">
+                <iframe src="/editor.html" className="w-full h-full bg-red-500"></iframe>
+            </div>
         </div>
     )
 }

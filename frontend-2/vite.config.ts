@@ -10,4 +10,23 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: "index.html",
+        editor: "public/editor.html",
+      },
+    },
+  },
+  server: {
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url === "/editor.html") {
+          res.setHeader("Cross-Origin-Opener-Policy", "same-origin")
+          res.setHeader("Cross-Origin-Embedder-Policy", "require-corp")
+        }
+        next()
+      })
+    },
+  }
 })

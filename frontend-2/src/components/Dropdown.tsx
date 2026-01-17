@@ -154,15 +154,22 @@ export function Dropdown({id, call, starred, name2, desc2}: {id: string, call: (
                         }
                         
 
-                        <DropdownMenuItem onClick={() => {
-                            navigate(`/playground/${id}`)
+                        <DropdownMenuItem onClick={async () => {
+
+                            const token = await axios.get("http://localhost:4000/auth/get", {withCredentials: true})
+
+                            window.location.href = `http://localhost:5174/playground/${id}/?token=${token.data.token}`
+                            // navigate(`/playground/${id}`)
                         }}>
                         <Eye className="mr-2 h-4 w-4" />
                         Open Project
                         </DropdownMenuItem>
 
-                        <DropdownMenuItem onClick={() => {
-                            window.open(`/playground/${id}`, "_blank", "noopener,noreferrer")
+                        <DropdownMenuItem onClick={async () => {
+                            const token = await axios.get("http://localhost:4000/auth/get", {withCredentials: true})
+
+                            window.open(`http://localhost:5174/playground/${id}/?token=${token.data.token}`, "_blank", "noopener,noreferrer")
+                            
                         }}>
                         <ExternalLink className="mr-2 h-4 w-4" />
                         Open in New Tab
