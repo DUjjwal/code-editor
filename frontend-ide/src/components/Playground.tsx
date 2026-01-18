@@ -337,6 +337,9 @@ function Header2() {
     const activeId = useEditor((state) => state.activeId)
     const setActive = useEditor((state) => state.setActive)
 
+    const openFiles = useEditor((state) => state.openFiles)
+    
+
     return (
         <>
             <header className="flex h-[7%] shrink-0 items-center gap-2 px-4 mt-1">
@@ -346,8 +349,18 @@ function Header2() {
                     <span onClick={(e) => {
                         e.stopPropagation()
                         removeFile(headersId[idx])
-                    }} className="ml-2 flex items-center justify-center rounded-md p-1 hover:text-red-700 hover:bg-gray-200">
-                        <X className="h-4 w-4" />
+                    }} className="group ml-2 flex items-center justify-center rounded-md p-1 hover:text-red-700 hover:bg-gray-200">
+                        {openFiles[headersId[idx]].hasUnsavedChanges && (
+                            <span className="h-2 w-2 rounded-full bg-red-400 group-hover:hidden" />
+                        )}
+
+                        {/* X ICON */}
+                        <X
+                            className={`
+                            h-4 w-4
+                            ${openFiles[headersId[idx]].hasUnsavedChanges ? "hidden group-hover:block" : "block"}
+                            `}
+                        />
                     </span>
                     </Button>
                 ))}            

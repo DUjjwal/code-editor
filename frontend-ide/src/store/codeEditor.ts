@@ -103,22 +103,35 @@ export const useEditor = create<EditorState>((set,get) => ({
         localStorage.setItem("activeId", JSON.stringify(id))
     },
     setContent: (value: string) => {
-        const openFiles = get().openFiles
+        set((state) => {
+            const file = state.openFiles[state.activeId]
 
-        const content = openFiles[get().activeId].newContent
-        openFiles[get().activeId].newContent = value
+            const updatedFile = {
+                ...file,
+                newContent: value,
+                hasUnsavedChanges: value !== file.oldContent
+            }
 
-        openFiles[get().activeId].hasUnsavedChanges = (value !== content) 
-        set({openFiles})
+            return {
+                openFiles: {
+                ...state.openFiles,
+                [state.activeId]: updatedFile
+                }
+            }
+        })
+
     },
     saveFile: (id: number) => {
-        const openFiles = get().openFiles
-
-        openFiles[id].oldContent = openFiles[id].newContent
-
-        openFiles[id].hasUnsavedChanges = false
-        
-        set({openFiles})
+        set((state) => ({
+            openFiles: {
+            ...state.openFiles,
+            [id]: {
+                ...state.openFiles[id],
+                oldContent: state.openFiles[id].newContent,
+                hasUnsavedChanges: false
+            }
+            }
+        }))
         
 
     },
