@@ -3,6 +3,7 @@ import { useParams, useSearchParams } from "react-router-dom"
 import axios from "axios"
 import {error, success} from "@/lib/error"
 import {useEditor} from "@/store/codeEditor"
+import { Monaco } from "./Monaco"
 
 import {
   ResizableHandle,
@@ -16,8 +17,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import Editor from '@monaco-editor/react';
-import type { editor } from "monaco-editor"
+
 
 import { AppSidebar } from "./AppSidebar"
 
@@ -373,9 +373,6 @@ function Header2() {
 function Body() {
 
     const activeId = useEditor((state) => state.activeId)
-    const openFiles = useEditor((state) => state.openFiles)
-    const setContent = useEditor((state) => state.setContent)
-
     
     if(activeId === -1)
         return <div className="w-full h-[86%] flex justify-center items-center flex-col gap-y-2">
@@ -387,55 +384,13 @@ function Body() {
             </div>
         </div>
 
-    let data = openFiles[activeId].newContent
-
-    const options: editor.IStandaloneEditorConstructionOptions = {
-  fontSize: 14,
-  fontFamily: "'Droid Sans Mono', monospace",
-
-  minimap: { enabled: false },
-
-  lineNumbers: "on",        // ✅ now this is "on" | "off" | "relative"
-  wordWrap: "on",         // ✅ union type
-  renderWhitespace: "selection",
-  renderLineHighlight: "line",
-
-  scrollBeyondLastLine: true,
-  automaticLayout: true,
-
-  bracketPairColorization: {
-    enabled: true,
-  },
-
-  inlineSuggest: {
-    enabled: true,
-  },
-
-  quickSuggestions: {
-    other: true,
-    comments: false,
-    strings: false,
-  },
-
-  parameterHints: {
-    enabled: true,
-  },
-}
-
-    const name = openFiles[activeId].name
+    
     
     return (
     <>
         <ResizablePanelGroup direction="horizontal" className="h-[86%] w-[100%]">
             <ResizablePanel>
-                <Editor
-                    height="90vh"
-                    path={name}
-                    value={data}
-                    theme="github-light"
-                    options={options}
-                    onChange={(value) => setContent(value!)}
-                />
+                <Monaco/>
 
             </ResizablePanel>
             <ResizableHandle/>
