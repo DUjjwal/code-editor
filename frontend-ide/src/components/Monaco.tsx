@@ -3,6 +3,8 @@ import type { editor } from "monaco-editor"
 import { useEditor } from '@/store/codeEditor';
 
 import axios from "axios"
+import { useAi } from '@/store/ai';
+import { useEffect, useRef } from 'react';
 
 export function Monaco() {
 
@@ -12,8 +14,8 @@ export function Monaco() {
 
         minimap: { enabled: false },
 
-        lineNumbers: "on",        // ✅ now this is "on" | "off" | "relative"
-        wordWrap: "on",         // ✅ union type
+        lineNumbers: "on",        
+        wordWrap: "on",         
         renderWhitespace: "selection",
         renderLineHighlight: "line",
 
@@ -46,6 +48,13 @@ export function Monaco() {
 
     let data = openFiles[activeId].newContent
     const name = openFiles[activeId].name
+
+    const flag = useAi((state) => state.flag)
+    const flagRef = useRef(flag)
+
+    useEffect(() => {
+        flagRef.current = flag
+    }, [flag])
     
     return (
         <Editor
@@ -84,6 +93,9 @@ export function Monaco() {
                 }
 
                 const handleAiSuggestion = async (model: any, position: any) => {
+
+                    if(!flagRef.current) return null
+
                     //@ts-ignore
                     const {before, after} = getContext(model, position)
 
@@ -128,7 +140,10 @@ export function Monaco() {
 
                 monaco.languages.registerInlineCompletionsProvider("javascript", {
                     provideInlineCompletions: async (model: any, position: any) => {
+                        
                         const suggestion = await handleAiSuggestion(model, position)
+
+                        if(!suggestion)return
 
                         return {
                             items: [

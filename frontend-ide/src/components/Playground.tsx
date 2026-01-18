@@ -17,9 +17,24 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 
 import { AppSidebar } from "./AppSidebar"
+import { Switch } from "./ui/switch"
 
 import {
   SidebarInset,
@@ -28,11 +43,12 @@ import {
 } from "@/components/ui/sidebar"
 
 import { useTree } from "@/store/fileStore"
-import { BotIcon, X, Save, SaveAll, Settings, FileText } from "lucide-react";
+import { BotIcon, X, Save, SaveAll, Settings, FileText, Power, MessageCircleMore } from "lucide-react";
 
 import { Button } from "./ui/button"
 import { Terminal } from "./Terminal"
 import { useWebContainer } from "@/store/webContainer"
+import { useAi } from "@/store/ai"
 
 export function Playground() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -197,6 +213,9 @@ export function Playground() {
 
 function Header1() {
 
+    const flag = useAi((state) => state.flag)
+    const toggleFlag = useAi((state) => state.toggleFlag)
+
     const count = useEditor((state) => state.count)
 
     const activeId = useEditor((state) => state.activeId)
@@ -299,9 +318,71 @@ function Header1() {
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button className="w-5" variant="outline">
-                                <BotIcon className="text-gray-700"/>
-                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <Button className="w-5" variant="outline">
+                                        <BotIcon className="text-gray-700"/>
+                                    </Button>
+
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-60 " align="start">
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem>
+                                            <BotIcon className="text-gray-700"/>
+                                            <p className="text-foreground font-normal text-sm">
+                                                AI Assistant
+                                            </p>
+                                            <DropdownMenuShortcut>
+                                                {flag ? "Active" : "Inactive"}
+                                            </DropdownMenuShortcut>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator/>
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem onClick={(e) => e.preventDefault()} className="flex justify-between items-center">
+                                            <div className="flex items-center justify-center gap-x-2">
+                                                <Power className="w-4 h-4"/>
+                                                <div>
+                                                    <p className="text-foreground">
+                                                        Disable AI
+                                                    </p>
+                                                    <p className="text-muted-foreground text-xs">
+                                                        Toggle AI Assistance
+                                                    </p>
+
+                                                </div>
+                                                    
+                                                
+                                            </div>
+                                            <div>
+                                            <Switch checked={flag} onCheckedChange={toggleFlag}/>
+
+                                            </div>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator/>
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem className="flex justify-between items-center">
+                                            <div className="flex items-center justify-center gap-x-2">
+                                                <MessageCircleMore className="w-4 h-4"/>
+                                                <div>
+                                                    <p className="text-foreground">
+                                                        Open Chat
+                                                    </p>
+                                                    <p className="text-muted-foreground text-xs">
+                                                        Chat with AI Assistance
+                                                    </p>
+
+                                                </div>
+                                                    
+                                                
+                                            </div>
+                                            
+                                        </DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </TooltipTrigger>
                         <TooltipContent className="bg-white text-black border shadow-md">
                             <p>AI Help</p>
