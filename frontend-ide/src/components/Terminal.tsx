@@ -48,12 +48,12 @@ export function Terminal() {
 
   return (
     <>
-    <ResizablePanelGroup direction="vertical" className="h-[86%] w-[100%]">
+    <ResizablePanelGroup direction="vertical" className="h-[86%] w-[100%] pb-5">
         <ResizablePanel>
             <iframe
               //@ts-ignore
               src={url}
-              className="w-full h-[100%] border-none"
+              className="w-full h-[100%] border-none rounded-lg p-2"
               sandbox="allow-scripts allow-same-origin allow-forms"
               allow="cross-origin-isolated"
             />
@@ -61,11 +61,20 @@ export function Terminal() {
         </ResizablePanel>
         <ResizableHandle/>
         <ResizablePanel>
-            <div
-              ref={terminalRef}
-              className="w-[100%] h-[100%]"
+          <div className="w-full h-full rounded-lg p-1 bg-zinc-900 overflow-hidden">
+            <div 
+              ref={terminalRef} 
+              className="
+                /* 1. Target the internal Xterm viewport to hide Webkit scrollbar (Chrome/Safari) */
+                [&_.xterm-viewport::-webkit-scrollbar]:hidden
+                
+                /* 2. Target the internal viewport to hide Firefox scrollbar */
+                [&_.xterm-viewport]:[scrollbar-width:none]
+              " 
             />
-            
+
+          </div>
+  
         </ResizablePanel>
         
     </ResizablePanelGroup>

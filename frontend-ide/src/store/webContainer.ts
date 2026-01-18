@@ -37,7 +37,7 @@ export const useWebContainer = create<web>((set, get) => ({
             cursorBlink: true,
             fontSize: 14,
             theme: {
-                background: "#1e1e1e",
+                background: "#18181b",
                 foreground: "#ffffff"
             }
         })
