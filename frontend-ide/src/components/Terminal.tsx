@@ -61,10 +61,11 @@ export function Terminal() {
         </ResizablePanel>
         <ResizableHandle/>
         <ResizablePanel>
-          <div className="w-full h-full rounded-lg p-1 bg-zinc-900 overflow-hidden">
+          <div className="w-full h-full rounded-lg p-2 bg-zinc-900 overflow-hidden">
             <div 
               ref={terminalRef} 
               className="
+                w-[98%] h-[98%]
                 /* 1. Target the internal Xterm viewport to hide Webkit scrollbar (Chrome/Safari) */
                 [&_.xterm-viewport::-webkit-scrollbar]:hidden
                 
