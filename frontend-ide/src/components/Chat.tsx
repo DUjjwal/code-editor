@@ -68,11 +68,43 @@ export function Chat({open, onOpenChange}: {open: any, onOpenChange: any}) {
     }, [messages])
 
 
+    useEffect(() => {
+        const fn = async () => {
+
+            console.log("clicked")
+
+            const res = await axios.get("http://localhost:4000/ai/all", {headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem("access-token")}`,
+            }})
+
+            console.log(res.data)
+
+            const temp: msg[] = []
+            res.data.data.forEach((item: any) => {
+                temp.push({
+                    role: item.role,
+                    content: item.content
+                })
+            })
+
+            console.log(temp)
+
+            setMessages(temp)
+
+            bottomRef.current?.scrollIntoView({
+                behavior: "smooth"
+            })
+
+        }
+        
+        fn()
+    }, [])
+
     const handleSubmit = async () => {
         if(text === "")return
 
         setMessages((prev) => [...prev, {role: "USER", content: text}])
-        
+
         const res = await axios.post("http://localhost:4000/ai/chat", {
             model,
             mode,
@@ -99,7 +131,7 @@ export function Chat({open, onOpenChange}: {open: any, onOpenChange: any}) {
                                 Enhanced AI Assisstant
                             </p>
                             <p className="text-muted-foreground text-sm">
-                                0 messages
+                                {messages.length} messages
                             </p>
 
                         </div>

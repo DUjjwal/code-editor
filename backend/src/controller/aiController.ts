@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import axios from "axios"
+import {prisma} from "../lib/prisma.js"
 
 const dict: any = {}
 
@@ -217,7 +218,19 @@ console.log("Hello World");
 export const getResponse = async (req: Request, res: Response, next: NextFunction) => {
     const {mode, model, text} = req.body 
 
+    await prisma.chat.create({
+        data: {
+            //@ts-ignore
+            userId: req.user,
+            role: "USER",
+            content: text
+        }
+    })
+
+
     console.log(dict[mode])
+
+
 
     const data = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
         messages: [
@@ -240,8 +253,32 @@ export const getResponse = async (req: Request, res: Response, next: NextFunctio
         }
     })
 
+
+    await prisma.chat.create({
+        data: {
+            //@ts-ignore
+            userId: req.user,
+            role: "AGENT",
+            content: data.data.choices[0].message.content
+        }
+    })
+
     return res.status(200).json({
         message: "response",
         data: data.data.choices[0].message.content
+    })
+}
+
+export const getAllChat = async (req: Request, res: Response, next: NextFunction) => {
+    const chats = await prisma.chat.findMany({
+        where: {
+            //@ts-ignore
+            userId: req.user
+        }
+    })
+
+    return res.status(200).json({
+        message: "chats",
+        data: chats
     })
 }

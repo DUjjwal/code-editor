@@ -14,6 +14,7 @@ model User {
   email              String      @unique
   picture            String?
   playground         Playground[]
+  chat               Chat[]
 }
 
 enum Templates {
@@ -54,4 +55,14 @@ model File {
   playgroundId       String
   playground         Playground  @relation(fields: [playgroundId], references: [id], onDelete: Cascade)
 
+}
+
+model Chat {
+  id                 String     @id @default(cuid())
+  role               String     
+  content            String    
+  createdAt          DateTime   @default(now())
+
+  userId             String
+  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
