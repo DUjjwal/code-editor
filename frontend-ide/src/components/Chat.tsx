@@ -40,6 +40,8 @@ interface msg {
     content: string
 }
 
+import axios from "axios"
+
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import rehypeHighlight from "rehype-highlight"
@@ -50,40 +52,12 @@ import { useRef, useEffect } from "react"
 
 export function Chat({open, onOpenChange}: {open: any, onOpenChange: any}) {
 
-    const [model, setModel] = useState("deepseek-coder-33b-instruct")
+    const [model, setModel] = useState("llama3-8b-8192")
     const [mode, setMode] = useState("Chat")
 
     const [messages, setMessages] = useState<msg[]>([])
 
-    const aiResponse = `
-Here’s how you can optimize your function.
-
-The main issue is that the timer variable is recreated on every call.
-You should keep it in closure scope.
-
-Below is the improved version:
-
-\`\`\`js
-function debounce(fn, delay) {
-  let timer = null;
-
-  return function (...args) {
-    clearTimeout(timer);
-
-    timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, delay);
-  };
-}
-\`\`\`
-
-### Why this works
-
-- timer is preserved between calls
-- prevents unnecessary calls
-
-Let me know if you want the throttle version too.
-`;
+    const [text, setText] = useState<string>("")
 
     const bottomRef = useRef<HTMLDivElement | null>(null)
 
@@ -93,6 +67,26 @@ Let me know if you want the throttle version too.
         })
     }, [messages])
 
+
+    const handleSubmit = async () => {
+        if(text === "")return
+
+        setMessages((prev) => [...prev, {role: "USER", content: text}])
+        
+        const res = await axios.post("http://localhost:4000/ai/chat", {
+            model,
+            mode,
+            text
+        }, {headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem("access-token")}`,
+        }})
+
+
+
+        setMessages((prev) => [...prev, {role: "AGENT", content: res.data.data}])
+
+        setText("")
+    }
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange} >
@@ -132,13 +126,13 @@ Let me know if you want the throttle version too.
 
                                 <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="deepseek-coder-33b-instruct">
-                                    deepseek
+                                    {/* <SelectItem value="deepseek-r1-distill-llama-70b">
+                                    deepseek-r1-distill
                                     </SelectItem>
-                                    <SelectItem value="qwen2.5-coder-32b-instruct">
-                                    qwen2.5
-                                    </SelectItem>
-                                    <SelectItem value="llama-3.1-70b-versatile">
+                                    <SelectItem value="mixtral-8x7b-32768">
+                                    mixtral
+                                    </SelectItem> */}
+                                    <SelectItem value="llama3-8b-8192">
                                     llama-3.1
                                     </SelectItem>
                                 </SelectGroup>
@@ -173,10 +167,8 @@ Let me know if you want the throttle version too.
 
                 <Separator/>
                 <div className="flex gap-x-1">
-                    <Input placeholder="Ask anything" className=""/>
-                    <Button variant="outline" className="bg-blue-600" onClick={() => {
-                        setMessages((prev) => [...prev, {role: "USER", content: "Hello"}])
-                    }}><Send className="text-white"/></Button>
+                    <Input placeholder="Ask anything" className="" value={text} onChange={(e) => setText(e.target.value)}/>
+                    <Button variant="outline" className="bg-blue-600" onClick={handleSubmit}><Send className="text-white"/></Button>
 
                 </div>
             </SheetContent>

@@ -5,6 +5,8 @@ import { googleAuth } from "./lib/googleJWT.js"
 import { authMiddleware, status } from "./lib/middleware.js"
 import router from "./routes/playgroundRoutes.js"
 import authRouter from "./routes/authRoutes.js"
+import aiRouter from "./routes/aiRoutes.js"
+
 
 const app = express()
 
@@ -37,6 +39,7 @@ app.get("/status", status)
 
 app.use("/playground", router)
 app.use("/auth", authRouter)
+app.use("/ai", aiRouter)
 
 
 app.listen(4000, () => {
