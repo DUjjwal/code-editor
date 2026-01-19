@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useParams, useSearchParams } from "react-router-dom"
 import axios from "axios"
 import {error, success} from "@/lib/error"
@@ -10,6 +10,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
+
+import { Chat } from "./Chat"
 
 import {
   Tooltip,
@@ -212,6 +214,7 @@ function Header1() {
     const toggleFlag = useAi((state) => state.toggleFlag)
 
     const count = useEditor((state) => state.count)
+    const [open, setOpen] = useState(false)
 
     const activeId = useEditor((state) => state.activeId)
     const openFiles = useEditor((state) => state.openFiles)
@@ -357,7 +360,7 @@ function Header1() {
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator/>
                                     <DropdownMenuGroup>
-                                        <DropdownMenuItem className="flex justify-between items-center">
+                                        <DropdownMenuItem className="flex justify-between items-center" onClick={() => setOpen(true)}>
                                             <div className="flex items-center justify-center gap-x-2">
                                                 <MessageCircleMore className="w-4 h-4"/>
                                                 <div>
@@ -398,6 +401,7 @@ function Header1() {
                     
                 </div>  
             </header>
+            <Chat open={open} onOpenChange={setOpen}/>
         </>
     )
 }

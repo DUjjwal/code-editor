@@ -82,6 +82,10 @@
     @apply bg-background text-foreground;
   }
 }
+pre {
+  @apply rounded-lg overflow-hidden m-1;
+}
+
 
 @layer utilities {
   .no-scrollbar {
